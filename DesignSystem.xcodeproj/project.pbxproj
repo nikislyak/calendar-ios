@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = C82FA23926DCE5FE0099D749 /* Month.swift */; };
+		C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */; };
 		C8EA33B626DC0A8700B9C838 /* DesignSystemApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8EA33B526DC0A8700B9C838 /* DesignSystemApp.swift */; };
 		C8EA33B826DC0A8700B9C838 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8EA33B726DC0A8700B9C838 /* ContentView.swift */; };
 		C8EA33BA26DC0A8900B9C838 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8EA33B926DC0A8900B9C838 /* Assets.xcassets */; };
@@ -14,6 +16,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C82FA23926DCE5FE0099D749 /* Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Month.swift; sourceTree = "<group>"; };
+		C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		C8EA33B226DC0A8700B9C838 /* DesignSystem.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = DesignSystem.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		C8EA33B526DC0A8700B9C838 /* DesignSystemApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DesignSystemApp.swift; sourceTree = "<group>"; };
 		C8EA33B726DC0A8700B9C838 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -54,6 +58,8 @@
 			children = (
 				C8EA33B526DC0A8700B9C838 /* DesignSystemApp.swift */,
 				C8EA33B726DC0A8700B9C838 /* ContentView.swift */,
+				C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */,
+				C82FA23926DCE5FE0099D749 /* Month.swift */,
 				C8EA33B926DC0A8900B9C838 /* Assets.xcassets */,
 				C8EA33BE26DC0A8900B9C838 /* Info.plist */,
 				C8EA33BB26DC0A8900B9C838 /* Preview Content */,
@@ -138,8 +144,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */,
 				C8EA33B826DC0A8700B9C838 /* ContentView.swift in Sources */,
 				C8EA33B626DC0A8700B9C838 /* DesignSystemApp.swift in Sources */,
+				C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
