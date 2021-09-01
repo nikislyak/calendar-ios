@@ -29,7 +29,7 @@ final class CalendarViewModel: ObservableObject {
 						.init(days: [
 							.init(
 								id: .init(),
-								value: .init(number: next.number, weekDay: next.dayOfWeek, isSelected: false)
+								value: .init(day: next, isSelected: false)
 							)
 						])
 					)
@@ -43,7 +43,7 @@ final class CalendarViewModel: ObservableObject {
 						.init(days: [
 							.init(
 								id: .init(),
-								value: .init(number: next.number, weekDay: next.dayOfWeek, isSelected: false)
+								value: .init(day: next, isSelected: false)
 							)
 						])
 					)
@@ -52,7 +52,7 @@ final class CalendarViewModel: ObservableObject {
 				acc.0[week].days.append(
 					.init(
 						id: .init(),
-						value: .init(number: next.number, weekDay: next.dayOfWeek, isSelected: false)
+						value: .init(day: next, isSelected: false)
 					)
 				)
 			}

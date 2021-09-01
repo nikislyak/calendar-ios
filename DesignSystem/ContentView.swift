@@ -8,15 +8,49 @@
 import SwiftUI
 
 struct RootView: View {
+	@StateObject var calendarViewModel: CalendarViewModel
+
     var body: some View {
-		CalendarView(calendarViewModel: .init(manager: .init(calendar: .current, currentDate: .init())))
+		CalendarView(calendarViewModel: calendarViewModel)
+			.onAppear { calendarViewModel.makeInitialData() }
     }
 }
 
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        RootView()
-    }
+struct CalendarView: View {
+	@ObservedObject var calendarViewModel: CalendarViewModel
+
+	var body: some View {
+		NavigationView {
+			List {
+				Section {
+					Text("\(calendarViewModel.localizedString(for: calendarViewModel.data.month))")
+						.bold()
+						.foregroundColor(Color.red)
+						.font(.title)
+					MonthView(data: $calendarViewModel.data)
+				}
+			}
+			.navigationBarTitleDisplayMode(.inline)
+			.toolbar {
+				ToolbarItem(placement: .principal) {
+					HStack(alignment: .center, spacing: 8) {
+						ForEach(calendarViewModel.headerData.indices) {
+							Text("\(calendarViewModel.localizedString(for: calendarViewModel.headerData[$0]))")
+							if $0 != calendarViewModel.headerData.indices.last {
+								Spacer()
+							}
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
+struct YearView: View {
+	var body: some View {
+		EmptyView()
+	}
 }
 
 struct MonthView: View {
@@ -51,7 +85,7 @@ struct WeekView: View {
 
 	var body: some View {
 		HStack(alignment: .center, spacing: 8) {
-			if data.days.first?.value.weekDay != .monday {
+			if data.days.first?.value.day.dayOfWeek != .monday {
 				Spacer()
 			}
 			ForEach(data.days) { element in
@@ -68,38 +102,6 @@ struct WeekData {
 	var days: [Identified<DayData>]
 }
 
-struct CalendarView: View {
-	@StateObject var calendarViewModel: CalendarViewModel
-
-	var body: some View {
-		NavigationView {
-			List {
-				Section {
-					Text("\(calendarViewModel.localizedString(for: calendarViewModel.data.month))")
-						.bold()
-						.foregroundColor(Color.red)
-						.font(.title)
-					MonthView(data: $calendarViewModel.data)
-				}
-			}
-			.navigationBarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .principal) {
-					HStack(alignment: .center, spacing: 8) {
-						ForEach(calendarViewModel.headerData.indices) {
-							Text("\(calendarViewModel.localizedString(for: calendarViewModel.headerData[$0]))")
-							if $0 != calendarViewModel.headerData.indices.last {
-								Spacer()
-							}
-						}
-					}
-				}
-			}
-		}
-		.onAppear { calendarViewModel.makeInitialData() }
-	}
-}
-
 struct DayView: View {
 	let data: DayData
 	let tapAction: () -> Void
@@ -107,7 +109,7 @@ struct DayView: View {
 	var body: some View {
 		GeometryReader { proxy in
 			Button(action: tapAction) {
-				Text(String(data.number))
+				Text(String(data.day.number))
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			}
 			.padding(8)
@@ -119,18 +121,6 @@ struct DayView: View {
 }
 
 struct DayData {
-	let number: Int
-	let weekDay: DayOfWeek
+	let day: Day
 	var isSelected: Bool
-}
-
-@dynamicMemberLookup
-struct Identified<T>: Identifiable {
-	let id: UUID
-	var value: T
-
-	subscript<V>(dynamicMember keyPath: WritableKeyPath<T, V>) -> V {
-		get { value[keyPath: keyPath] }
-		set { value[keyPath: keyPath] = newValue }
-	}
 }
