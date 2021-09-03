@@ -22,12 +22,8 @@ struct CalendarView: View {
 	var body: some View {
 		NavigationView {
 			List {
-				Section {
-					Text("\(calendarViewModel.localizedString(for: calendarViewModel.data.month))")
-						.bold()
-						.foregroundColor(Color.red)
-						.font(.title)
-					MonthView(data: $calendarViewModel.data)
+				ForEach(calendarViewModel.data) { container in
+					YearView(data: container.value)
 				}
 			}
 			.navigationBarTitleDisplayMode(.inline)
@@ -48,22 +44,42 @@ struct CalendarView: View {
 }
 
 struct YearView: View {
+	let data: YearData
+
 	var body: some View {
-		EmptyView()
+		Section {
+			Text("\(data.number)")
+				.bold()
+				.font(.title)
+			ForEach(data.months) { container in
+				Text(container.value.name)
+					.bold()
+					.foregroundColor(Color.red)
+					.font(.title2)
+				MonthView(data: container.value) { _, _ in
+
+				}
+			}
+		}
 	}
 }
 
+struct YearData {
+	let number: Int
+	var months: [Identified<MonthData>]
+}
+
 struct MonthView: View {
-	@Binding var data: MonthData
+	let data: MonthData
+
+	let dayTapAction: (Int, Int) -> Void
 
 	var body: some View {
 		ForEach(data.weeks) { container in
 			WeekView(data: container.value) { id in
 				for week in data.weeks.enumerated() {
 					if let index = week.element.days.firstIndex(where: { $0.id == id }) {
-						withAnimation {
-							data.weeks[week.offset].days[index].isSelected.toggle()
-						}
+						dayTapAction(week.offset, index)
 						return
 					}
 				}
@@ -76,6 +92,7 @@ struct MonthView: View {
 
 struct MonthData {
 	let month: Month
+	let name: String
 	var weeks: [Identified<WeekData>]
 }
 

@@ -17,8 +17,7 @@ final class CalendarComponentsManager {
 		self.currentDate = currentDate
 	}
 
-	func makeCurrentMonth() -> [Day] {
-		guard let interval = currentMonthInterval() else { return [] }
+	func makeDays(for interval: DateInterval) -> [Day] {
 		var dateComponents: [DateComponents] = []
 		calendar.enumerateDates(startingAfter: calendar.startOfDay(for: interval.start),
 								matching: DateComponents(hour: 0, minute: 0, second: 1),
@@ -26,7 +25,8 @@ final class CalendarComponentsManager {
 								repeatedTimePolicy: .first, direction: .forward) { date, isMatch, stop in
 			if let date = date {
 				if date <= interval.end {
-					dateComponents.append(calendar.dateComponents([.day, .month, .year, .weekday], from: date))
+					dateComponents.append(calendar.dateComponents([.day, .month, .year, .weekday, .weekOfMonth],
+																  from: date))
 				} else {
 					stop = true
 				}
@@ -36,9 +36,15 @@ final class CalendarComponentsManager {
 		return dateComponents.map {
 			Day(number: $0.day!,
 				dayOfWeek: DayOfWeek(rawValue: $0.weekday!)!,
+				weekOfMonth: $0.weekOfMonth!,
 				month: Month(rawValue: $0.month!)!,
 				year: $0.year!)
 		}
+	}
+
+	func makeCurrentMonth() -> [Day] {
+		guard let interval = currentMonthInterval() else { return [] }
+		return makeDays(for: interval)
 	}
 
 	func currentMonthInterval() -> DateInterval? {

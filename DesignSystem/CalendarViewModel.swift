@@ -10,55 +10,68 @@ import Foundation
 final class CalendarViewModel: ObservableObject {
 	private let manager: CalendarComponentsManager
 
-	@Published var data = MonthData(month: .january, weeks: [])
 	var headerData: [DayOfWeek] {
 		manager.weekDays
 	}
+
+	@Published var data = [Identified<YearData>]()
 
 	init(manager: CalendarComponentsManager) {
 		self.manager = manager
 	}
 
+	func makeYearData(from days: [Day]) -> [Identified<YearData>] {
+		makeComponentsData(from: days, whileEqualBy: \.year) { days in
+			.init(
+				number: days.first!.year,
+				months: makeMonthsData(from: days)
+			)
+		}
+	}
+
+	private func makeComponentsData<C: Collection, V: Equatable, Result>(
+		from days: C,
+		whileEqualBy keyPath: KeyPath<C.Element, V>,
+		transform: ([C.Element]) -> Result
+	) -> [Identified<Result>] where C.Element == Day {
+		var days = AnyCollection(days)
+		var result: [Identified<Result>] = []
+		repeat {
+			let componentDays = Array(days.takeWhile { $0[keyPath: keyPath] == $1[keyPath: keyPath] })
+			days = AnyCollection(days.dropFirst(componentDays.count))
+			result.append(
+				.init(
+					id: .init(),
+					value: transform(componentDays)
+				)
+			)
+		} while !days.isEmpty
+		return result
+	}
+
+	private func makeMonthsData<C: Collection>(from sameYearDays: C) -> [Identified<MonthData>] where C.Element == Day {
+		makeComponentsData(from: sameYearDays, whileEqualBy: \.month) { days in
+			.init(
+				month: days.first!.month,
+				name: localizedString(for: days.first!.month),
+				weeks: makeWeeksData(from: days)
+			)
+		}
+	}
+
+	private func makeWeeksData<C: Collection>(from sameMonthDays: C) -> [Identified<WeekData>] where C.Element == Day {
+		makeComponentsData(from: sameMonthDays, whileEqualBy: \.weekOfMonth) { days in
+			.init(days: makeDaysData(from: days))
+		}
+	}
+
+	private func makeDaysData<C: Collection>(from sameWeekDays: C) -> [Identified<DayData>] where C.Element == Day {
+		sameWeekDays.map { .init(id: .init(), value: .init(day: $0, isSelected: false)) }
+	}
+
 	func makeInitialData() {
 		let days = manager.makeCurrentMonth()
-		data = .init(
-			month: days.first?.month ?? .january,
-			weeks: days.reduce(into: ([WeekData](), week: nil as Int?)) { acc, next in
-				if acc.week == nil {
-					acc.0.append(
-						.init(days: [
-							.init(
-								id: .init(),
-								value: .init(day: next, isSelected: false)
-							)
-						])
-					)
-					acc.week = 0
-					return
-				}
-				guard let week = acc.week else { return }
-				if !acc.0[week].days.isEmpty, next.dayOfWeek == .monday {
-					acc.week? += 1
-					acc.0.append(
-						.init(days: [
-							.init(
-								id: .init(),
-								value: .init(day: next, isSelected: false)
-							)
-						])
-					)
-					return
-				}
-				acc.0[week].days.append(
-					.init(
-						id: .init(),
-						value: .init(day: next, isSelected: false)
-					)
-				)
-			}
-			.0
-			.map { Identified(id: .init(), value: $0) }
-		)
+		data = makeYearData(from: days)
 	}
 
 	func localizedString(for weekDay: DayOfWeek) -> String {
@@ -67,5 +80,54 @@ final class CalendarViewModel: ObservableObject {
 
 	func localizedString(for month: Month) -> String {
 		manager.localizedString(for: month)
+	}
+}
+
+struct WhileSequence<SubSequence: Sequence>: Sequence {
+	private let sequence: SubSequence
+	private let predicate: (SubSequence.Element, SubSequence.Element) -> Bool
+
+	init(sequence: SubSequence, predicate: @escaping (SubSequence.Element, SubSequence.Element) -> Bool) {
+		self.sequence = sequence
+		self.predicate = predicate
+	}
+
+	struct Iterator<SubSequence: Sequence>: IteratorProtocol {
+		private let sequence: SubSequence
+		private let predicate: (SubSequence.Element, SubSequence.Element) -> Bool
+
+		init(sequence: SubSequence, predicate: @escaping (SubSequence.Element, SubSequence.Element) -> Bool) {
+			self.sequence = sequence
+			self.predicate = predicate
+		}
+
+		private var previous: SubSequence.Element?
+		private var iterator: SubSequence.Iterator?
+
+		mutating func next() -> SubSequence.Element? {
+			if previous == nil {
+				var iterator = sequence.makeIterator()
+				previous = iterator.next()
+				self.iterator = iterator
+				return previous
+			} else if let previous = previous,
+					  let next = iterator?.next(),
+					  predicate(previous, next) {
+				self.previous = next
+				return next
+			} else {
+				return nil
+			}
+		}
+	}
+
+	func makeIterator() -> Iterator<SubSequence> {
+		Iterator(sequence: sequence, predicate: predicate)
+	}
+}
+
+extension Sequence {
+	func takeWhile(predicate: @escaping (Element, Element) -> Bool) -> WhileSequence<Self> {
+		WhileSequence(sequence: self, predicate: predicate)
 	}
 }

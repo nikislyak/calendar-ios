@@ -16,4 +16,12 @@ struct Identified<T>: Identifiable {
 		get { value[keyPath: keyPath] }
 		set { value[keyPath: keyPath] = newValue }
 	}
+
+	subscript<V>(dynamicMember keyPath: KeyPath<T, V>) -> V {
+		value[keyPath: keyPath]
+	}
 }
+
+extension Identified: Equatable where T: Equatable {}
+
+extension Identified: Hashable where T: Hashable {}

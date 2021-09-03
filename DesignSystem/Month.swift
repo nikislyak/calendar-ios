@@ -35,6 +35,7 @@ enum Month: Int, CaseIterable {
 struct Day {
 	let number: Int
 	let dayOfWeek: DayOfWeek
+	let weekOfMonth: Int
 	let month: Month
 	let year: Int
 }
