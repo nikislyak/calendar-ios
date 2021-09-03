@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Combine
 
 struct RootView: View {
 	@StateObject var calendarViewModel: CalendarViewModel
@@ -19,32 +20,45 @@ struct RootView: View {
 struct CalendarView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
+	@Namespace var currentMonthID
+
 	var body: some View {
 		NavigationView {
-			List {
-				ForEach(calendarViewModel.data) { container in
-					YearView(data: container.value)
+			ScrollViewReader { proxy in
+				List {
+					withAnimation {
+						ForEach(calendarViewModel.data) { container in
+							YearView(currentMonthID: currentMonthID, data: container.value) { month in
+								calendarViewModel.onAppear(of: month)
+							}
+						}
+					}
 				}
-			}
-			.navigationBarTitleDisplayMode(.inline)
-			.toolbar {
-				ToolbarItem(placement: .principal) {
-					HStack(alignment: .center, spacing: 8) {
-						ForEach(calendarViewModel.headerData.indices) {
-							Text("\(calendarViewModel.localizedString(for: calendarViewModel.headerData[$0]))")
-							if $0 != calendarViewModel.headerData.indices.last {
-								Spacer()
+				.navigationBarTitleDisplayMode(.inline)
+				.toolbar {
+					ToolbarItem(placement: .principal) {
+						HStack(alignment: .center, spacing: 8) {
+							ForEach(calendarViewModel.headerData.indices) {
+								Text("\(calendarViewModel.localizedString(for: calendarViewModel.headerData[$0]))")
+								if $0 != calendarViewModel.headerData.indices.last {
+									Spacer()
+								}
 							}
 						}
 					}
 				}
 			}
 		}
+		.navigationViewStyle(StackNavigationViewStyle())
 	}
 }
 
 struct YearView: View {
+	let currentMonthID: Namespace.ID
+
 	let data: YearData
+
+	let onMonthAppear: (MonthData) -> Void
 
 	var body: some View {
 		Section {
@@ -56,15 +70,18 @@ struct YearView: View {
 					.bold()
 					.foregroundColor(Color.red)
 					.font(.title2)
+					.id(container.isCurrent ? currentMonthID : nil)
 				MonthView(data: container.value) { _, _ in
-
+				}
+				.onAppear {
+					onMonthAppear(container.value)
 				}
 			}
 		}
 	}
 }
 
-struct YearData {
+struct YearData: Hashable {
 	let number: Int
 	var months: [Identified<MonthData>]
 }
@@ -90,10 +107,14 @@ struct MonthView: View {
 	}
 }
 
-struct MonthData {
+struct MonthData: Hashable {
 	let month: Month
 	let name: String
 	var weeks: [Identified<WeekData>]
+
+	var isCurrent: Bool {
+		weeks.contains { $0.isCurrent }
+	}
 }
 
 struct WeekView: View {
@@ -115,8 +136,12 @@ struct WeekView: View {
 	}
 }
 
-struct WeekData {
+struct WeekData: Hashable {
 	var days: [Identified<DayData>]
+
+	var isCurrent: Bool {
+		days.contains { $0.day.isCurrent }
+	}
 }
 
 struct DayView: View {
@@ -137,7 +162,7 @@ struct DayView: View {
 	}
 }
 
-struct DayData {
+struct DayData: Hashable {
 	let day: Day
 	var isSelected: Bool
 }

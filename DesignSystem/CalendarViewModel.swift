@@ -70,8 +70,7 @@ final class CalendarViewModel: ObservableObject {
 	}
 
 	func makeInitialData() {
-		let days = manager.makeCurrentMonth()
-		data = makeYearData(from: days)
+		data = makeYearData(from: manager.makeCurrentYear())
 	}
 
 	func localizedString(for weekDay: DayOfWeek) -> String {
@@ -81,53 +80,31 @@ final class CalendarViewModel: ObservableObject {
 	func localizedString(for month: Month) -> String {
 		manager.localizedString(for: month)
 	}
-}
 
-struct WhileSequence<SubSequence: Sequence>: Sequence {
-	private let sequence: SubSequence
-	private let predicate: (SubSequence.Element, SubSequence.Element) -> Bool
-
-	init(sequence: SubSequence, predicate: @escaping (SubSequence.Element, SubSequence.Element) -> Bool) {
-		self.sequence = sequence
-		self.predicate = predicate
-	}
-
-	struct Iterator<SubSequence: Sequence>: IteratorProtocol {
-		private let sequence: SubSequence
-		private let predicate: (SubSequence.Element, SubSequence.Element) -> Bool
-
-		init(sequence: SubSequence, predicate: @escaping (SubSequence.Element, SubSequence.Element) -> Bool) {
-			self.sequence = sequence
-			self.predicate = predicate
-		}
-
-		private var previous: SubSequence.Element?
-		private var iterator: SubSequence.Iterator?
-
-		mutating func next() -> SubSequence.Element? {
-			if previous == nil {
-				var iterator = sequence.makeIterator()
-				previous = iterator.next()
-				self.iterator = iterator
-				return previous
-			} else if let previous = previous,
-					  let next = iterator?.next(),
-					  predicate(previous, next) {
-				self.previous = next
-				return next
-			} else {
-				return nil
+	func onAppear(of month: MonthData) {
+		guard let year = month.weeks.first?.days.first?.day.year else { return }
+		func binarySearch(year: Int) -> Int? {
+			var lowerIndex = 0
+			var upperIndex = data.count - 1
+			while true {
+				let currentIndex = (lowerIndex + upperIndex) / 2
+				if data[currentIndex].number == year {
+					return currentIndex
+				} else if lowerIndex > upperIndex {
+					return nil
+				} else {
+					if data[currentIndex].number > year {
+						upperIndex = currentIndex - 1
+					} else {
+						lowerIndex = currentIndex + 1
+					}
+				}
 			}
 		}
-	}
-
-	func makeIterator() -> Iterator<SubSequence> {
-		Iterator(sequence: sequence, predicate: predicate)
-	}
-}
-
-extension Sequence {
-	func takeWhile(predicate: @escaping (Element, Element) -> Bool) -> WhileSequence<Self> {
-		WhileSequence(sequence: self, predicate: predicate)
+		if month.month == .december, binarySearch(year: year + 1) == nil {
+			data.append(contentsOf: makeYearData(from: manager.makeDays(for: year + 1, direction: .forward)))
+		} else if month.month == .january, binarySearch(year: year - 1) == nil {
+//			data = makeYearData(from: manager.makeDays(for: year - 1, direction: .forward)) + data
+		}
 	}
 }

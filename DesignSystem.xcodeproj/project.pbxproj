@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80C542C26E26D61002A9665 /* WhileSequence.swift */; };
 		C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = C82FA23926DCE5FE0099D749 /* Month.swift */; };
 		C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */; };
 		C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91C26DFC51C00E1D440 /* Identified.swift */; };
@@ -18,6 +19,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		C80C542C26E26D61002A9665 /* WhileSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhileSequence.swift; sourceTree = "<group>"; };
 		C82FA23926DCE5FE0099D749 /* Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Month.swift; sourceTree = "<group>"; };
 		C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		C8E8C91C26DFC51C00E1D440 /* Identified.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identified.swift; sourceTree = "<group>"; };
@@ -64,6 +66,7 @@
 				C8EA33B726DC0A8700B9C838 /* ContentView.swift */,
 				C8E8C91C26DFC51C00E1D440 /* Identified.swift */,
 				C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */,
+				C80C542C26E26D61002A9665 /* WhileSequence.swift */,
 				C82FA23926DCE5FE0099D749 /* Month.swift */,
 				C8E8C91E26DFC96300E1D440 /* CalendarComponentsManager.swift */,
 				C8EA33B926DC0A8900B9C838 /* Assets.xcassets */,
@@ -153,6 +156,7 @@
 				C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */,
 				C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */,
 				C8EA33B826DC0A8700B9C838 /* ContentView.swift in Sources */,
+				C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */,
 				C8E8C91F26DFC96300E1D440 /* CalendarComponentsManager.swift in Sources */,
 				C8EA33B626DC0A8700B9C838 /* DesignSystemApp.swift in Sources */,
 				C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */,
@@ -285,6 +289,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"DesignSystem/Preview Content\"";
+				DEVELOPMENT_TEAM = YC6855T4ZG;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DesignSystem/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
@@ -292,7 +297,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ru.nikislyak.DesignSystem;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.nikitakislyakov1.DesignSystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
@@ -306,6 +311,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"DesignSystem/Preview Content\"";
+				DEVELOPMENT_TEAM = YC6855T4ZG;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = DesignSystem/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.5;
@@ -313,7 +319,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = ru.nikislyak.DesignSystem;
+				PRODUCT_BUNDLE_IDENTIFIER = ru.nikitakislyakov1.DesignSystem;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;

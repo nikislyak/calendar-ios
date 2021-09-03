@@ -32,10 +32,11 @@ enum Month: Int, CaseIterable {
 	case december
 }
 
-struct Day {
+struct Day: Hashable {
 	let number: Int
 	let dayOfWeek: DayOfWeek
 	let weekOfMonth: Int
 	let month: Month
 	let year: Int
+	let isCurrent: Bool
 }
