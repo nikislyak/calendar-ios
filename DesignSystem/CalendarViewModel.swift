@@ -27,9 +27,11 @@ final class CalendarViewModel: ObservableObject {
 
 	func makeYearData(from days: [Day]) -> [Identified<YearData>] {
 		makeComponentsData(from: days, whileEqualBy: \.year) { days in
-			.init(
+			let months = makeMonthsData(from: days)
+			return .init(
 				number: days.first!.year,
-				months: makeMonthsData(from: days)
+				months: months,
+				isCurrent: months.contains { $0.isCurrent }
 			)
 		}
 	}
@@ -56,11 +58,12 @@ final class CalendarViewModel: ObservableObject {
 
 	private func makeMonthsData<C: Collection>(from sameYearDays: C) -> [Identified<MonthData>] where C.Element == Day {
 		makeComponentsData(from: sameYearDays, whileEqualBy: \.month) { days in
-			.init(
+			let weeks = makeWeeksData(from: days)
+			return .init(
 				month: days.first!.month,
 				name: localizedString(for: days.first!.month),
-				weeks: makeWeeksData(from: days),
-				isCurrent: days.contains { $0.isCurrent }
+				weeks: weeks,
+				isCurrent: weeks.contains { $0.isCurrent }
 			)
 		}
 	}
@@ -96,7 +99,7 @@ final class CalendarViewModel: ObservableObject {
 			  month.month == .december || month.month == .january else { return }
 		Just((year, data))
 			.receive(on: queue)
-			.map { [manager] year, data -> AnyPublisher<([Identified<YearData>]), Never> in
+			.map { [manager] year, data -> AnyPublisher<[Identified<YearData>], Never> in
 				if month.month == .december, data.binarySearchFirstIndex(where: {
 					$0.number < year + 1
 						? .orderedAscending

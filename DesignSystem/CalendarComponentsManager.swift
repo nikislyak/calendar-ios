@@ -9,8 +9,8 @@ import Foundation
 import Combine
 
 final class CalendarComponentsManager {
-	let currentDate: Date
-	let calendar: Calendar
+	private let currentDate: Date
+	private let calendar: Calendar
 	let weekDays = Array(DayOfWeek.allCases.dropFirst() + CollectionOfOne(.sunday))
 
 	init(calendar: Calendar, currentDate: Date) {

@@ -9,9 +9,13 @@ import SwiftUI
 
 @main
 struct DesignSystemApp: App {
+	@StateObject var calendarViewModel = CalendarViewModel(
+		manager: .init(calendar: .autoupdatingCurrent, currentDate: .init())
+	)
+
     var body: some Scene {
         WindowGroup {
-			RootView(calendarViewModel: .init(manager: .init(calendar: .autoupdatingCurrent, currentDate: .init())))
+			RootView(calendarViewModel: calendarViewModel)
         }
     }
 }
