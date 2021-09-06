@@ -26,11 +26,17 @@ struct CalendarView: View {
 		NavigationView {
 			ScrollViewReader { proxy in
 				List {
-					withAnimation {
-						ForEach(calendarViewModel.data) { container in
-							YearView(currentMonthID: currentMonthID, data: container.value) { month in
-								calendarViewModel.onAppear(of: month)
-							}
+					ForEach(calendarViewModel.data) { container in
+						YearView(currentMonthID: currentMonthID, data: container.value) { month, week, day in
+							calendarViewModel.data
+								.firstIndex { $0.id == container.id }
+								.map { year in
+									withAnimation {
+										calendarViewModel.data[year].months[month].weeks[week].days[day].isSelected.toggle()
+									}
+								}
+						} onMonthAppear: { month in
+							calendarViewModel.onAppear(of: month)
 						}
 					}
 				}
@@ -58,6 +64,8 @@ struct YearView: View {
 
 	let data: YearData
 
+	let dayTapAction: (Int, Int, Int) -> Void
+
 	let onMonthAppear: (MonthData) -> Void
 
 	var body: some View {
@@ -71,7 +79,8 @@ struct YearView: View {
 					.foregroundColor(Color.red)
 					.font(.title2)
 					.id(container.isCurrent ? currentMonthID : nil)
-				MonthView(data: container.value) { _, _ in
+				MonthView(data: container.value) { week, day in
+					data.months.firstIndex { $0.id == container.id }.map { dayTapAction($0, week, day) }
 				}
 				.onAppear {
 					onMonthAppear(container.value)
@@ -101,7 +110,6 @@ struct MonthView: View {
 					}
 				}
 			}
-			.frame(alignment: .trailing)
 			.buttonStyle(PlainButtonStyle())
 		}
 	}
@@ -111,10 +119,7 @@ struct MonthData: Hashable {
 	let month: Month
 	let name: String
 	var weeks: [Identified<WeekData>]
-
-	var isCurrent: Bool {
-		weeks.contains { $0.isCurrent }
-	}
+	let isCurrent: Bool
 }
 
 struct WeekView: View {
@@ -138,10 +143,7 @@ struct WeekView: View {
 
 struct WeekData: Hashable {
 	var days: [Identified<DayData>]
-
-	var isCurrent: Bool {
-		days.contains { $0.day.isCurrent }
-	}
+	let isCurrent: Bool
 }
 
 struct DayView: View {

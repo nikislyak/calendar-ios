@@ -6,9 +6,14 @@
 //
 
 import Foundation
+import Combine
 
 final class CalendarViewModel: ObservableObject {
 	private let manager: CalendarComponentsManager
+
+	private let queue = DispatchQueue(label: "ru.nikitakislyakov1.calendar", target: .global(qos: .userInteractive))
+
+	private var bag = Set<AnyCancellable>()
 
 	var headerData: [DayOfWeek] {
 		manager.weekDays
@@ -54,14 +59,15 @@ final class CalendarViewModel: ObservableObject {
 			.init(
 				month: days.first!.month,
 				name: localizedString(for: days.first!.month),
-				weeks: makeWeeksData(from: days)
+				weeks: makeWeeksData(from: days),
+				isCurrent: days.contains { $0.isCurrent }
 			)
 		}
 	}
 
 	private func makeWeeksData<C: Collection>(from sameMonthDays: C) -> [Identified<WeekData>] where C.Element == Day {
 		makeComponentsData(from: sameMonthDays, whileEqualBy: \.weekOfMonth) { days in
-			.init(days: makeDaysData(from: days))
+			.init(days: makeDaysData(from: days), isCurrent: days.contains { $0.isCurrent })
 		}
 	}
 
@@ -70,7 +76,11 @@ final class CalendarViewModel: ObservableObject {
 	}
 
 	func makeInitialData() {
-		data = makeYearData(from: manager.makeCurrentYear())
+		manager.makeCurrentYear()
+			.receive(on: queue)
+			.map { [unowned self] in makeYearData(from: $0) }
+			.receive(on: DispatchQueue.main)
+			.assign(to: &$data)
 	}
 
 	func localizedString(for weekDay: DayOfWeek) -> String {
@@ -82,29 +92,38 @@ final class CalendarViewModel: ObservableObject {
 	}
 
 	func onAppear(of month: MonthData) {
-		guard let year = month.weeks.first?.days.first?.day.year else { return }
-		func binarySearch(year: Int) -> Int? {
-			var lowerIndex = 0
-			var upperIndex = data.count - 1
-			while true {
-				let currentIndex = (lowerIndex + upperIndex) / 2
-				if data[currentIndex].number == year {
-					return currentIndex
-				} else if lowerIndex > upperIndex {
-					return nil
+		guard let year = month.weeks.first?.days.first?.day.year,
+			  month.month == .december || month.month == .january else { return }
+		Just((year, data))
+			.receive(on: queue)
+			.map { [manager] year, data -> AnyPublisher<([Identified<YearData>]), Never> in
+				if month.month == .december, data.binarySearchFirstIndex(where: {
+					$0.number < year + 1
+						? .orderedAscending
+						: $0.number == year + 1
+						? .orderedSame
+						: .orderedDescending
+
+				}) == nil {
+					return manager.makeDays(for: year + 1)
+						.map { [unowned self] in data + makeYearData(from: $0) }
+						.eraseToAnyPublisher()
+				} else if month.month == .january, data.binarySearchFirstIndex(where: {
+					$0.number < year - 1
+						? .orderedAscending
+						: $0.number == year - 1
+						? .orderedSame
+						: .orderedDescending
+
+				}) == nil {
+//					data = makeYearData(from: manager.makeDays(for: year - 1)) + data
+					return Empty().eraseToAnyPublisher()
 				} else {
-					if data[currentIndex].number > year {
-						upperIndex = currentIndex - 1
-					} else {
-						lowerIndex = currentIndex + 1
-					}
+					return Empty().eraseToAnyPublisher()
 				}
 			}
-		}
-		if month.month == .december, binarySearch(year: year + 1) == nil {
-			data.append(contentsOf: makeYearData(from: manager.makeDays(for: year + 1, direction: .forward)))
-		} else if month.month == .january, binarySearch(year: year - 1) == nil {
-//			data = makeYearData(from: manager.makeDays(for: year - 1, direction: .forward)) + data
-		}
+			.switchToLatest()
+			.receive(on: DispatchQueue.main)
+			.assign(to: &$data)
 	}
 }

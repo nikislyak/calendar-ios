@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80C542C26E26D61002A9665 /* WhileSequence.swift */; };
 		C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = C82FA23926DCE5FE0099D749 /* Month.swift */; };
+		C893C87026E656A400FB2E4F /* Collection+binarySearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C86F26E656A400FB2E4F /* Collection+binarySearch.swift */; };
 		C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */; };
 		C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91C26DFC51C00E1D440 /* Identified.swift */; };
 		C8E8C91F26DFC96300E1D440 /* CalendarComponentsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91E26DFC96300E1D440 /* CalendarComponentsManager.swift */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		C80C542C26E26D61002A9665 /* WhileSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhileSequence.swift; sourceTree = "<group>"; };
 		C82FA23926DCE5FE0099D749 /* Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Month.swift; sourceTree = "<group>"; };
+		C893C86F26E656A400FB2E4F /* Collection+binarySearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+binarySearch.swift"; sourceTree = "<group>"; };
 		C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		C8E8C91C26DFC51C00E1D440 /* Identified.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identified.swift; sourceTree = "<group>"; };
 		C8E8C91E26DFC96300E1D440 /* CalendarComponentsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarComponentsManager.swift; sourceTree = "<group>"; };
@@ -66,6 +68,7 @@
 				C8EA33B726DC0A8700B9C838 /* ContentView.swift */,
 				C8E8C91C26DFC51C00E1D440 /* Identified.swift */,
 				C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */,
+				C893C86F26E656A400FB2E4F /* Collection+binarySearch.swift */,
 				C80C542C26E26D61002A9665 /* WhileSequence.swift */,
 				C82FA23926DCE5FE0099D749 /* Month.swift */,
 				C8E8C91E26DFC96300E1D440 /* CalendarComponentsManager.swift */,
@@ -155,6 +158,7 @@
 			files = (
 				C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */,
 				C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */,
+				C893C87026E656A400FB2E4F /* Collection+binarySearch.swift in Sources */,
 				C8EA33B826DC0A8700B9C838 /* ContentView.swift in Sources */,
 				C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */,
 				C8E8C91F26DFC96300E1D440 /* CalendarComponentsManager.swift in Sources */,
@@ -224,6 +228,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 5.0;
 			};
 			name = Debug;
 		};
@@ -278,6 +283,7 @@
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
 				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 5.0;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;

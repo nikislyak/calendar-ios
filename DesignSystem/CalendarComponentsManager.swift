@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Combine
 
 final class CalendarComponentsManager {
 	let currentDate: Date
@@ -17,42 +18,45 @@ final class CalendarComponentsManager {
 		self.currentDate = currentDate
 	}
 
-	func makeDays(for interval: DateInterval, direction: Calendar.SearchDirection = .forward) -> [Day] {
-		var dateComponents: [DateComponents] = []
-		calendar.enumerateDates(startingAfter: calendar.startOfDay(for: interval.start),
-								matching: DateComponents(hour: 0, minute: 0, second: 1),
-								matchingPolicy: .nextTimePreservingSmallerComponents,
-								repeatedTimePolicy: .first, direction: direction) { date, isMatch, stop in
-			if let date = date {
-				if date <= interval.end {
-					dateComponents.append(calendar.dateComponents([.day, .month, .year, .weekday, .weekOfMonth],
-																  from: date))
-				} else {
-					stop = true
+	func makeDays(for interval: DateInterval, direction: Calendar.SearchDirection = .forward) -> AnyPublisher<[Day], Never> {
+		Just((calendar, currentDate))
+			.map { calendar, currentDate in
+				var dateComponents: [DateComponents] = []
+				calendar.enumerateDates(startingAfter: calendar.startOfDay(for: interval.start),
+										matching: DateComponents(hour: 0, minute: 0, second: 1),
+										matchingPolicy: .nextTimePreservingSmallerComponents,
+										repeatedTimePolicy: .first, direction: direction) { date, isMatch, stop in
+					if let date = date {
+						if date <= interval.end {
+							dateComponents.append(calendar.dateComponents([.day, .month, .year, .weekday, .weekOfMonth],
+																		  from: date))
+						} else {
+							stop = true
+						}
+					}
+				}
+
+				return dateComponents.map {
+					Day(number: $0.day!,
+						dayOfWeek: DayOfWeek(rawValue: $0.weekday!)!,
+						weekOfMonth: $0.weekOfMonth!,
+						month: Month(rawValue: $0.month!)!,
+						year: $0.year!,
+						isCurrent: calendar.isDate(calendar.date(from: $0)!, inSameDayAs: currentDate))
 				}
 			}
-		}
-
-		return dateComponents.map {
-			Day(number: $0.day!,
-				dayOfWeek: DayOfWeek(rawValue: $0.weekday!)!,
-				weekOfMonth: $0.weekOfMonth!,
-				month: Month(rawValue: $0.month!)!,
-				year: $0.year!,
-				isCurrent: calendar.isDate(calendar.date(from: $0)!, inSameDayAs: currentDate))
-		}
+			.eraseToAnyPublisher()
 	}
 
-	func makeCurrentYear() -> [Day] {
-		guard let interval = currentYearInterval() else { return [] }
-		return makeDays(for: interval)
+	func makeCurrentYear() -> AnyPublisher<[Day], Never> {
+		makeDays(for: currentYearInterval()!)
 	}
 
 	func currentYearInterval() -> DateInterval? {
 		calendar.dateInterval(of: .year, for: currentDate)
 	}
 
-	func makeDays(for year: Int, direction: Calendar.SearchDirection) -> [Day] {
+	func makeDays(for year: Int) -> AnyPublisher<[Day], Never> {
 		let date = calendar.date(from: DateComponents(year: year))!
 		let interval = calendar.dateInterval(of: .year, for: date)!
 		return makeDays(for: interval)
