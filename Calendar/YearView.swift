@@ -25,12 +25,12 @@ struct YearView: View {
 		Section {
 			Text(String(data.number))
 				.bold()
-				.font(.title).foregroundColor(data.isCurrent ? .red : .black)
+				.font(.title).foregroundColor(data.isCurrent ? .accentColor : .primary)
 
 			ForEach(data.months) { container in
 				Text(container.name)
 					.fontWeight(.medium)
-					.foregroundColor(container.isCurrent ? .red : .black)
+					.foregroundColor(container.isCurrent ? .accentColor : .primary)
 					.font(.title2)
 					.id(container.id)
 				MonthView(data: container.value) { week, day in

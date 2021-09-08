@@ -24,8 +24,8 @@ struct DayView: View {
 					.frame(maxWidth: proxy.size.width / 2, maxHeight: proxy.size.height / 2)
 			}
 			.padding(4)
-			.background(data.day.isCurrent ? Color.red : .clear)
-			.foregroundColor(data.day.isCurrent ? .white : .black)
+			.background(data.day.isCurrent ? Color.accentColor : .clear)
+			.foregroundColor(data.day.isCurrent ? .white : .primary)
 			.cornerRadius(proxy.size.width)
 		}
 	}
