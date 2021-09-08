@@ -22,8 +22,13 @@ struct CalendarScaledView: View {
 							.foregroundColor(year.isCurrent ? .red : .black)
 							.font(.title)
 							.bold()
+
 						LazyVGrid(
-							columns: .init(repeating: .init(.flexible(maximum: (proxy.size.width - 32) / 3), spacing: 16, alignment: .top), count: 3),
+							columns: .init(
+								repeating: .init(.flexible(maximum: (proxy.size.width - 32) / 3),
+												 spacing: 16, alignment: .top),
+								count: 3
+							),
 							alignment: .center,
 							spacing: 24,
 							pinnedViews: []
@@ -31,11 +36,15 @@ struct CalendarScaledView: View {
 							ForEach(year.months) { month in
 								ZStack {
 									NavigationLink(
-										destination: CalendarView(calendarViewModel: calendarViewModel,
-																  initialMonth: month.id),
+										destination: CalendarView(
+											calendarViewModel: calendarViewModel,
+											initialMonth: month.id
+										),
 										tag: month.id,
 										selection: $openedMonth
-									) { EmptyView() }
+									) {
+										EmptyView()
+									}
 
 									CompactMonthView(width: (proxy.size.width - 32 - 32) / 3, monthData: month) {
 										openedMonth = $0

@@ -16,7 +16,13 @@ struct WhileSequence<SubSequence: Sequence>: Sequence {
 		self.predicate = predicate
 	}
 
-	struct Iterator<SubSequence: Sequence>: IteratorProtocol {
+	func makeIterator() -> PairComparingIterator<SubSequence> {
+		PairComparingIterator(sequence: sequence, predicate: predicate)
+	}
+}
+
+extension WhileSequence {
+	struct PairComparingIterator<SubSequence: Sequence>: IteratorProtocol {
 		private let sequence: SubSequence
 		private let predicate: (SubSequence.Element, SubSequence.Element) -> Bool
 
@@ -43,10 +49,6 @@ struct WhileSequence<SubSequence: Sequence>: Sequence {
 				return nil
 			}
 		}
-	}
-
-	func makeIterator() -> Iterator<SubSequence> {
-		Iterator(sequence: sequence, predicate: predicate)
 	}
 }
 

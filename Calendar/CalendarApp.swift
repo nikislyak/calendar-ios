@@ -1,5 +1,5 @@
 //
-//  DesignSystemApp.swift
+//  CalendarApp.swift
 //  DesignSystem
 //
 //  Created by Nikita Kislyakov1 on 29.08.2021.
@@ -8,7 +8,7 @@
 import SwiftUI
 
 @main
-struct DesignSystemApp: App {
+struct CalendarApp: App {
 	@StateObject var calendarViewModel = CalendarViewModel(
 		manager: .init(calendar: .autoupdatingCurrent, currentDate: .init())
 	)
