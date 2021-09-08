@@ -23,9 +23,9 @@ struct DayView: View {
 				Text(String(data.day.number))
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			}
-			.padding(8)
-			.background(data.isSelected ? Color.red : .clear)
-			.foregroundColor(data.isSelected ? .white : .black)
+			.padding(4)
+			.background(data.day.isCurrent ? Color.red : .clear)
+			.foregroundColor(data.day.isCurrent ? .white : .black)
 			.cornerRadius(proxy.size.width)
 		}
 	}
