@@ -1,2 +1,4 @@
 
-Calendar.xcodeproj/project.xcworkspace/xcuserdata/out-kislyakov-np.xcuserdatad/UserInterfaceState.xcuserstate
+*.xcuserstate
+
+*.xcbkptlist

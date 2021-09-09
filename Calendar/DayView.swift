@@ -21,12 +21,19 @@ struct DayView: View {
 		GeometryReader { proxy in
 			Button(action: tapAction) {
 				Text(String(data.day.number))
-					.frame(maxWidth: proxy.size.width / 2, maxHeight: proxy.size.height / 2)
+					.frame(maxWidth: proxy.size.width, maxHeight: proxy.size.height)
 			}
-			.padding(4)
-			.background(data.day.isCurrent ? Color.accentColor : .clear)
+			.background(
+				(data.day.isCurrent ? Color.accentColor : .clear)
+					.frame(maxWidth: dimension(proxy: proxy), maxHeight: dimension(proxy: proxy), alignment: .center)
+					.cornerRadius(dimension(proxy: proxy))
+			)
 			.foregroundColor(data.day.isCurrent ? .white : .primary)
-			.cornerRadius(proxy.size.width)
+			.position(x: proxy.size.width / 2, y: proxy.size.height / 2)
 		}
+	}
+
+	private func dimension(proxy: GeometryProxy) -> CGFloat {
+		min(proxy.size.width, proxy.size.height)
 	}
 }

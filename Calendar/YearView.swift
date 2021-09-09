@@ -28,12 +28,7 @@ struct YearView: View {
 				.font(.title).foregroundColor(data.isCurrent ? .accentColor : .primary)
 
 			ForEach(data.months) { container in
-				Text(container.name)
-					.fontWeight(.medium)
-					.foregroundColor(container.isCurrent ? .accentColor : .primary)
-					.font(.title2)
-					.id(container.id)
-				MonthView(data: container.value) { week, day in
+				MonthView(month: container) { week, day in
 					data.months.firstIndex { $0.id == container.id }.map { dayTapAction($0, week, day) }
 				}
 				.onAppear {

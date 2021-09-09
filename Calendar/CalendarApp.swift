@@ -9,13 +9,25 @@ import SwiftUI
 
 @main
 struct CalendarApp: App {
-	@StateObject var calendarViewModel = CalendarViewModel(
-		manager: .init(calendar: .autoupdatingCurrent, currentDate: .init())
-	)
+	private let calendar: Calendar = {
+		var calendar = Calendar.autoupdatingCurrent
+		calendar.locale = .autoupdatingCurrent
+		return calendar
+	}()
+
+	@StateObject var calendarViewModel: CalendarViewModel = {
+		var calendar = Calendar.autoupdatingCurrent
+		calendar.locale = .autoupdatingCurrent
+		let viewModel = CalendarViewModel(
+			manager: .init(calendar: calendar, currentDate: .init())
+		)
+		return viewModel
+	}()
 
     var body: some Scene {
         WindowGroup {
 			RootView(calendarViewModel: calendarViewModel)
-        }
+				.environment(\.calendar, calendar)
+		}
     }
 }

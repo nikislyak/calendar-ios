@@ -14,31 +14,32 @@ struct CalendarView: View {
 	let initialMonth: UUID
 
 	var body: some View {
-		ScrollViewReader { proxy in
-			List {
-				ForEach(calendarViewModel.data) { container in
-					YearView(data: container.value) { month, week, day in
-						calendarViewModel.data
-							.firstIndex { $0.id == container.id }
-							.map { year in
-								withAnimation {
-									calendarViewModel.data[year].months[month].weeks[week].days[day].isSelected.toggle()
-								}
-							}
-					} onMonthAppear: { month in
-						calendarViewModel.onAppear(of: month)
+		GeometryReader { proxy in
+			VStack(spacing: 0) {
+				HStack(alignment: .center, spacing: 4) {
+					ForEach(calendarViewModel.headerData.indices) {
+						Text("\(calendarViewModel.localizedString(for: calendarViewModel.headerData[$0]))")
+							.font(.subheadline)
+							.frame(maxWidth: (proxy.size.width - 24) / 7)
 					}
 				}
-			}
-			.onAppear { proxy.scrollTo(initialMonth, anchor: .top) }
-			.toolbar {
-				ToolbarItem(placement: .principal) {
-					HStack(alignment: .center, spacing: 8) {
-						ForEach(calendarViewModel.headerData.indices) {
-							Text("\(calendarViewModel.localizedString(for: calendarViewModel.headerData[$0]))")
-								.font(.subheadline)
-							if $0 != calendarViewModel.headerData.indices.last {
-								Spacer()
+				.padding([.leading, .trailing], 16)
+				.padding([.top, .bottom], 4)
+
+				ScrollViewReader { proxy in
+					List {
+						ForEach(calendarViewModel.data) { container in
+							YearView(data: container.value) { month, week, day in
+							} onMonthAppear: { month in
+								calendarViewModel.onAppear(of: month)
+							}
+						}
+					}
+					.onAppear { proxy.scrollTo(initialMonth, anchor: .top) }
+					.toolbar {
+						ToolbarItem(placement: .navigationBarTrailing) {
+							Button(action: {}) {
+								Image(systemName: "magnifyingglass")
 							}
 						}
 					}

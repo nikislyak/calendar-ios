@@ -64,15 +64,27 @@ struct CalendarScaledView: View {
 			.navigationBarTitleDisplayMode(.inline)
 		}
 		.listStyle(PlainListStyle())
+		.toolbar {
+			ToolbarItem(placement: .navigationBarTrailing) {
+				HStack {
+					Button(action: {}, label: {
+						Image(systemName: "magnifyingglass")
+					})
+				}
+			}
+		}
 	}
 }
 
 struct CompactMonthView: View {
 	@Environment(\.colorScheme) private var colorScheme
+	@Environment(\.calendar) private var calendar
 
 	let width: CGFloat
 	let monthData: Identified<MonthData>
 	let tapAction: (UUID) -> Void
+
+	private let daysSpacing: CGFloat = 3
 
 	var body: some View {
 		Button(action: { tapAction(monthData.id) }) {
@@ -83,8 +95,8 @@ struct CompactMonthView: View {
 					.foregroundColor(monthData.isCurrent ? .accentColor : .primary)
 
 				ForEach(monthData.weeks) { week in
-					HStack(spacing: 4) {
-						if week.value.days.first?.day.dayOfWeek != .monday {
+					HStack(spacing: daysSpacing) {
+						if week.value.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
 							Spacer()
 						}
 						ForEach(week.days) { day in
@@ -93,10 +105,10 @@ struct CompactMonthView: View {
 								.foregroundColor(dayNumberColor(day: day.value))
 								.fontWeight(.semibold)
 								.kerning(-0.5)
-								.frame(width: dayWidth(daysCount: week.days.count))
+								.frame(width: dayWidth)
 								.background(
 									(day.day.isCurrent ? Color.accentColor : .clear)
-										.cornerRadius(dayWidth(daysCount: week.days.count))
+										.cornerRadius(dayWidth)
 								)
 						}
 					}
@@ -109,7 +121,7 @@ struct CompactMonthView: View {
 		day.day.isCurrent ? colorScheme == .light ? .white : .primary : colorScheme == .light ? .black : .primary
 	}
 
-	private func dayWidth(daysCount: Int) -> CGFloat {
-		(width - CGFloat(daysCount - 1) * 4) / 7
+	private var dayWidth: CGFloat {
+		(width - CGFloat(6) * daysSpacing) / 7
 	}
 }
