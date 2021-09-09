@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -16,6 +16,7 @@
 		C893C87826E6ACF900FB2E4F /* YearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87726E6ACF900FB2E4F /* YearView.swift */; };
 		C893C87A26E6AD6200FB2E4F /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87926E6AD6200FB2E4F /* CalendarView.swift */; };
 		C893C87C26E6AEEA00FB2E4F /* CalendarScaledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */; };
+		C8B1082726EA805800E4081D /* Localization.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8B1082926EA805800E4081D /* Localization.strings */; };
 		C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */; };
 		C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91C26DFC51C00E1D440 /* Identified.swift */; };
 		C8E8C91F26DFC96300E1D440 /* CalendarComponentsManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91E26DFC96300E1D440 /* CalendarComponentsManager.swift */; };
@@ -35,6 +36,8 @@
 		C893C87726E6ACF900FB2E4F /* YearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearView.swift; sourceTree = "<group>"; };
 		C893C87926E6AD6200FB2E4F /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarScaledView.swift; sourceTree = "<group>"; };
+		C8B1082826EA805800E4081D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localization.strings; sourceTree = "<group>"; };
+		C8B1082A26EA805D00E4081D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localization.strings; sourceTree = "<group>"; };
 		C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
 		C8E8C91C26DFC51C00E1D440 /* Identified.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Identified.swift; sourceTree = "<group>"; };
 		C8E8C91E26DFC96300E1D440 /* CalendarComponentsManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarComponentsManager.swift; sourceTree = "<group>"; };
@@ -92,6 +95,7 @@
 				C8E8C91E26DFC96300E1D440 /* CalendarComponentsManager.swift */,
 				C8EA33B926DC0A8900B9C838 /* Assets.xcassets */,
 				C8EA33BE26DC0A8900B9C838 /* Info.plist */,
+				C8B1082926EA805800E4081D /* Localization.strings */,
 				C8EA33BB26DC0A8900B9C838 /* Preview Content */,
 			);
 			path = Calendar;
@@ -140,7 +144,7 @@
 				};
 			};
 			buildConfigurationList = C8EA33AD26DC0A8700B9C838 /* Build configuration list for PBXProject "Calendar" */;
-			compatibilityVersion = "Xcode 9.3";
+			compatibilityVersion = "Xcode 12.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -164,6 +168,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				C8EA33BD26DC0A8900B9C838 /* Preview Assets.xcassets in Resources */,
+				C8B1082726EA805800E4081D /* Localization.strings in Resources */,
 				C8EA33BA26DC0A8900B9C838 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -193,6 +198,18 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		C8B1082926EA805800E4081D /* Localization.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				C8B1082826EA805800E4081D /* en */,
+				C8B1082A26EA805D00E4081D /* ru */,
+			);
+			name = Localization.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		C8EA33BF26DC0A8900B9C838 /* Debug */ = {
@@ -320,7 +337,7 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_ASSET_PATHS = "\"Calendar/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
+				DEVELOPMENT_TEAM = YC6855T4ZG;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Calendar/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 14.4;

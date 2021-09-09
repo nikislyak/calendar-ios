@@ -72,6 +72,6 @@ final class CalendarComponentsManager {
 	func localizedString(for month: Month) -> String {
 		let symbols = calendar.standaloneMonthSymbols
 		let index = Month.allCases.firstIndex(of: month)!
-		return symbols[index]
+		return symbols[index].capitalized
 	}
 }

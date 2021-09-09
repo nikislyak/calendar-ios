@@ -12,53 +12,64 @@ struct CalendarScaledView: View {
 	@Environment(\.colorScheme) private var colorScheme
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
-	@State var openedMonth: UUID?
+	@State private var openedMonth: UUID?
 
 	var body: some View {
 		GeometryReader { proxy in
-			List {
-				ForEach(calendarViewModel.data) { year in
-					Section {
-						Text(String(year.number))
-							.foregroundColor(year.isCurrent ? .accentColor : .primary)
-							.font(.title)
-							.bold()
+			ScrollViewReader { scrollProxy in
+				List {
+					ForEach(calendarViewModel.data) { year in
+						Section {
+							Text(String(year.number))
+								.foregroundColor(year.isCurrent ? .accentColor : .primary)
+								.font(.title)
+								.bold()
 
-						LazyVGrid(
-							columns: .init(
-								repeating: .init(
-									.flexible(maximum: (proxy.size.width - 32) / 3),
-									spacing: 16, alignment: .top
+							LazyVGrid(
+								columns: .init(
+									repeating: .init(
+										.flexible(maximum: (proxy.size.width - 32) / 3),
+										spacing: 16, alignment: .top
+									),
+									count: 3
 								),
-								count: 3
-							),
-							alignment: .center,
-							spacing: 24,
-							pinnedViews: []
-						) {
-							ForEach(year.months) { month in
-								ZStack {
-									NavigationLink(
-										destination: CalendarView(
-											calendarViewModel: calendarViewModel,
-											initialMonth: month.id
-										),
-										tag: month.id,
-										selection: $openedMonth
-									) {
-										EmptyView()
-									}
+								alignment: .center,
+								spacing: 24,
+								pinnedViews: []
+							) {
+								ForEach(year.months) { month in
+									ZStack {
+										NavigationLink(
+											destination: CalendarView(
+												calendarViewModel: calendarViewModel,
+												initialMonth: month.id
+											),
+											tag: month.id,
+											selection: $openedMonth
+										) {
+											EmptyView()
+										}
 
-									CompactMonthView(width: (proxy.size.width - 32 - 32) / 3, monthData: month) {
-										openedMonth = $0
+										CompactMonthView(width: (proxy.size.width - 32 - 32) / 3, monthData: month) {
+											openedMonth = $0
+										}
+										.background(colorScheme == .light ? Color.white : .black)
+										.onAppear { calendarViewModel.onAppear(of: month.value) }
 									}
-									.background(colorScheme == .light ? Color.white : .black)
-									.onAppear { calendarViewModel.onAppear(of: month.value) }
 								}
 							}
 						}
+						.buttonStyle(PlainButtonStyle())
 					}
-					.buttonStyle(PlainButtonStyle())
+				}
+				.toolbar {
+					ToolbarItem(placement: .bottomBar) {
+						Button(action: {
+							scrollProxy.scrollTo(calendarViewModel.data.first { $0.isCurrent }?.id, anchor: .top)
+						}) {
+							Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+						}
+					}
 				}
 			}
 			.navigationBarTitleDisplayMode(.inline)
@@ -67,9 +78,9 @@ struct CalendarScaledView: View {
 		.toolbar {
 			ToolbarItem(placement: .navigationBarTrailing) {
 				HStack {
-					Button(action: {}, label: {
+					Button(action: {}) {
 						Image(systemName: "magnifyingglass")
-					})
+					}
 				}
 			}
 		}

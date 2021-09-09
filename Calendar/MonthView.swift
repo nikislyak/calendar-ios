@@ -27,7 +27,7 @@ struct MonthView: View {
 	var body: some View {
 		Group {
 			GeometryReader {
-				Text(calendar.shortMonthSymbols[month.month.rawValue - 1])
+				Text(calendar.shortStandaloneMonthSymbols[month.month.rawValue - 1].capitalized)
 					.fontWeight(.medium)
 					.foregroundColor(month.isCurrent ? .accentColor : .primary)
 					.font(.title2)
