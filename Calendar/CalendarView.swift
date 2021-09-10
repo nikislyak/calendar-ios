@@ -13,6 +13,8 @@ struct CalendarView: View {
 
 	let initialMonth: UUID
 
+	@State private var monthForScrolling: UUID?
+
 	var body: some View {
 		GeometryReader { proxy in
 			VStack(spacing: 0) {
@@ -26,20 +28,41 @@ struct CalendarView: View {
 				.padding([.leading, .trailing], 16)
 				.padding([.top, .bottom], 4)
 
-				ScrollViewReader { proxy in
+				ScrollViewReader { scrollProxy in
 					List {
-						ForEach(calendarViewModel.data) { container in
+						ForEach(calendarViewModel.years) { container in
 							YearView(data: container.value) { month, week, day in
 							} onMonthAppear: { month in
 								calendarViewModel.onAppear(of: month)
 							}
 						}
 					}
-					.onAppear { proxy.scrollTo(initialMonth, anchor: .top) }
+					.onChange(of: monthForScrolling) { id in
+						if let id = id {
+							withAnimation {
+								scrollProxy.scrollTo(id, anchor: .top)
+							}
+							monthForScrolling = nil
+						}
+					}
+					.onAppear { scrollProxy.scrollTo(initialMonth, anchor: .top) }
 					.toolbar {
 						ToolbarItem(placement: .navigationBarTrailing) {
 							Button(action: {}) {
 								Image(systemName: "magnifyingglass")
+							}
+						}
+						ToolbarItem(placement: .bottomBar) {
+							HStack {
+								Spacer()
+								Button {
+									monthForScrolling = calendarViewModel.years
+										.first { $0.isCurrent }?.months
+										.first { $0.isCurrent }?.id
+								} label: {
+									Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+								}
+								Spacer()
 							}
 						}
 					}

@@ -19,7 +19,7 @@ final class CalendarViewModel: ObservableObject {
 		manager.weekDays
 	}
 
-	@Published var data = [Identified<YearData>]()
+	@Published var years = [Identified<YearData>]()
 
 	init(manager: CalendarComponentsManager) {
 		self.manager = manager
@@ -83,7 +83,7 @@ final class CalendarViewModel: ObservableObject {
 			.receive(on: queue)
 			.map { [unowned self] in makeYearData(from: $0) }
 			.receive(on: DispatchQueue.main)
-			.assign(to: &$data)
+			.assign(to: &$years)
 	}
 
 	func localizedString(for weekDay: DayOfWeek) -> String {
@@ -97,7 +97,7 @@ final class CalendarViewModel: ObservableObject {
 	func onAppear(of month: MonthData) {
 		guard let year = month.weeks.first?.days.first?.day.year,
 			  month.month == .december || month.month == .january else { return }
-		Just((year, data))
+		Just((year, years))
 			.receive(on: queue)
 			.map { [manager] year, data -> AnyPublisher<[Identified<YearData>], Never> in
 				if month.month == .december, data.binarySearchFirstIndex(where: {
@@ -127,6 +127,6 @@ final class CalendarViewModel: ObservableObject {
 			}
 			.switchToLatest()
 			.receive(on: DispatchQueue.main)
-			.assign(to: &$data)
+			.assign(to: &$years)
 	}
 }

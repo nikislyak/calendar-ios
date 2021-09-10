@@ -14,75 +14,94 @@ struct CalendarScaledView: View {
 
 	@State private var openedMonth: UUID?
 
+	@State private var yearForScrolling: UUID?
+
 	var body: some View {
 		GeometryReader { proxy in
 			ScrollViewReader { scrollProxy in
 				List {
-					ForEach(calendarViewModel.data) { year in
-						Section {
-							Text(String(year.number))
+					ForEach(calendarViewModel.years) { year in
+						Section(
+							header: Text(String(year.number))
 								.foregroundColor(year.isCurrent ? .accentColor : .primary)
 								.font(.title)
 								.bold()
-
+						) {
 							LazyVGrid(
 								columns: .init(
 									repeating: .init(
-										.flexible(maximum: (proxy.size.width - 32) / 3),
-										spacing: 16, alignment: .top
+										.fixed((proxy.size.width - 32 - 32) / 3),
+										spacing: 16,
+										alignment: .top
 									),
 									count: 3
 								),
 								alignment: .center,
-								spacing: 24,
-								pinnedViews: []
+								spacing: 24
 							) {
 								ForEach(year.months) { month in
-									ZStack {
-										NavigationLink(
-											destination: CalendarView(
-												calendarViewModel: calendarViewModel,
-												initialMonth: month.id
-											),
-											tag: month.id,
-											selection: $openedMonth
-										) {
-											EmptyView()
-										}
-
-										CompactMonthView(width: (proxy.size.width - 32 - 32) / 3, monthData: month) {
-											openedMonth = $0
-										}
-										.background(colorScheme == .light ? Color.white : .black)
-										.onAppear { calendarViewModel.onAppear(of: month.value) }
-									}
+									makeCompactMonthView(month: month, width: (proxy.size.width - 32 - 32) / 3)
 								}
 							}
 						}
+						.background(Color.clear)
 						.buttonStyle(PlainButtonStyle())
 					}
 				}
+				.listStyle(GroupedListStyle())
+				.listRowBackground(Color.clear)
+				.onChange(of: yearForScrolling) { id in
+					if let id = id {
+						withAnimation {
+							scrollProxy.scrollTo(id, anchor: .top)
+						}
+						yearForScrolling = nil
+					}
+				}
 				.toolbar {
+					ToolbarItem(placement: .navigationBarTrailing) {
+						HStack {
+							Button {} label: {
+								Image(systemName: "magnifyingglass")
+							}
+						}
+					}
 					ToolbarItem(placement: .bottomBar) {
-						Button(action: {
-							scrollProxy.scrollTo(calendarViewModel.data.first { $0.isCurrent }?.id, anchor: .top)
-						}) {
-							Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+						HStack {
+							Spacer()
+							Button {
+								yearForScrolling = calendarViewModel.years.first { $0.isCurrent }?.id
+							} label: {
+								Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+							}
+							Spacer()
 						}
 					}
 				}
+				.navigationBarTitleDisplayMode(.inline)
 			}
-			.navigationBarTitleDisplayMode(.inline)
 		}
-		.listStyle(PlainListStyle())
-		.toolbar {
-			ToolbarItem(placement: .navigationBarTrailing) {
-				HStack {
-					Button(action: {}) {
-						Image(systemName: "magnifyingglass")
-					}
-				}
+	}
+
+	@ViewBuilder
+	private func makeCompactMonthView(month: Identified<MonthData>, width: CGFloat) -> some View {
+		ZStack {
+			NavigationLink(
+				destination: CalendarView(
+					calendarViewModel: calendarViewModel,
+					initialMonth: month.id
+				),
+				tag: month.id,
+				selection: $openedMonth
+			) {
+				EmptyView()
 			}
+			.hidden()
+
+			CompactMonthView(width: width, monthData: month) {
+				openedMonth = $0
+			}
+			.onAppear { calendarViewModel.onAppear(of: month.value) }
 		}
 	}
 }
