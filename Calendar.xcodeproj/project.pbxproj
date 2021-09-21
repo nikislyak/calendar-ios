@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		40127E9726F9E0E900C9F265 /* CompactMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40127E9626F9E0E900C9F265 /* CompactMonthView.swift */; };
 		C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80C542C26E26D61002A9665 /* WhileSequence.swift */; };
 		C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = C82FA23926DCE5FE0099D749 /* Month.swift */; };
 		C893C87026E656A400FB2E4F /* Collection+binarySearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C86F26E656A400FB2E4F /* Collection+binarySearch.swift */; };
@@ -27,6 +28,7 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		40127E9626F9E0E900C9F265 /* CompactMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactMonthView.swift; sourceTree = "<group>"; };
 		C80C542C26E26D61002A9665 /* WhileSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhileSequence.swift; sourceTree = "<group>"; };
 		C82FA23926DCE5FE0099D749 /* Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Month.swift; sourceTree = "<group>"; };
 		C893C86F26E656A400FB2E4F /* Collection+binarySearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+binarySearch.swift"; sourceTree = "<group>"; };
@@ -83,6 +85,7 @@
 				C8EA33B726DC0A8700B9C838 /* RootView.swift */,
 				C893C87926E6AD6200FB2E4F /* CalendarView.swift */,
 				C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */,
+				40127E9626F9E0E900C9F265 /* CompactMonthView.swift */,
 				C893C87726E6ACF900FB2E4F /* YearView.swift */,
 				C893C87526E6ACD700FB2E4F /* MonthView.swift */,
 				C893C87326E6ACBC00FB2E4F /* WeekView.swift */,
@@ -187,6 +190,7 @@
 				C893C87026E656A400FB2E4F /* Collection+binarySearch.swift in Sources */,
 				C8EA33B826DC0A8700B9C838 /* RootView.swift in Sources */,
 				C893C87A26E6AD6200FB2E4F /* CalendarView.swift in Sources */,
+				40127E9726F9E0E900C9F265 /* CompactMonthView.swift in Sources */,
 				C893C87226E6AC9200FB2E4F /* DayView.swift in Sources */,
 				C893C87C26E6AEEA00FB2E4F /* CalendarScaledView.swift in Sources */,
 				C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */,
