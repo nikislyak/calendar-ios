@@ -66,15 +66,11 @@ struct CalendarScaledView: View {
 							}
 						}
 					}
-					ToolbarItem(placement: .bottomBar) {
-						HStack {
-							Spacer()
-							Button {
-								yearForScrolling = calendarViewModel.years.first { $0.isCurrent }?.id
-							} label: {
-								Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
-							}
-							Spacer()
+					ToolbarItemGroup(placement: .bottomBar) {
+						Button {
+							yearForScrolling = calendarViewModel.years.first { $0.isCurrent }?.id
+						} label: {
+							Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
 						}
 					}
 				}

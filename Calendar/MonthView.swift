@@ -22,23 +22,25 @@ struct MonthView: View {
 
 	let dayTapAction: (Int, Int) -> Void
 
-	@State private var firstWeekdayFrame: CGRect?
+	@State private var preference: WeekStartPreferenceKey.Data?
 
 	var body: some View {
 		Group {
-			GeometryReader {
+			GeometryReader { proxy in
 				Text(calendar.shortStandaloneMonthSymbols[month.month.rawValue - 1].capitalized)
 					.fontWeight(.medium)
 					.foregroundColor(month.isCurrent ? .accentColor : .primary)
 					.font(.title2)
-					.position(x: firstWeekdayFrame?.midX ?? $0.size.width / 2, y: $0.size.height / 2)
+					.position(
+						x: preference.map { proxy[$0.rect] }?.midX ?? proxy.size.width / 2,
+						y: proxy.size.height / 2
+					)
 			}
 
 			ForEach(month.weeks) { week in
 				WeekView(
-					firstWeekDayFrame: $firstWeekdayFrame,
-					parentID: week == month.weeks.first ? month.id : nil,
-					data: week.value
+					parentID: month.id,
+					week: week.value
 				) { id in
 					for week in month.weeks.enumerated() {
 						if let index = week.element.days.firstIndex(where: { $0.id == id }) {
@@ -50,6 +52,8 @@ struct MonthView: View {
 				.buttonStyle(PlainButtonStyle())
 			}
 		}
-		.coordinateSpace(name: month.id)
+		.onPreferenceChange(WeekStartPreferenceKey.self) { value in
+			value[month.id].map { preference = $0 }
+		}
 	}
 }

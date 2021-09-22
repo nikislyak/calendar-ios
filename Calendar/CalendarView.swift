@@ -48,24 +48,21 @@ struct CalendarView: View {
 					.onAppear { scrollProxy.scrollTo(initialMonth, anchor: .top) }
 					.toolbar {
 						ToolbarItem(placement: .navigationBarTrailing) {
-							Button(action: {}) {
+							Button {} label: {
 								Image(systemName: "magnifyingglass")
 							}
 						}
-						ToolbarItem(placement: .bottomBar) {
-							HStack {
-								Spacer()
-								Button {
-									monthForScrolling = calendarViewModel.years
-										.first { $0.isCurrent }?.months
-										.first { $0.isCurrent }?.id
-								} label: {
-									Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
-								}
-								Spacer()
+						ToolbarItemGroup(placement: .bottomBar) {
+							Button {
+								monthForScrolling = calendarViewModel.years
+									.first { $0.isCurrent }?.months
+									.first { $0.isCurrent }?.id
+							} label: {
+								Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
 							}
 						}
 					}
+					.listStyle(PlainListStyle())
 				}
 			}
 		}

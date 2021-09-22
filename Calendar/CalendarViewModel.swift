@@ -70,7 +70,11 @@ final class CalendarViewModel: ObservableObject {
 
 	private func makeWeeksData<C: Collection>(from sameMonthDays: C) -> [Identified<WeekData>] where C.Element == Day {
 		makeComponentsData(from: sameMonthDays, whileEqualBy: \.weekOfMonth) { days in
-			.init(days: makeDaysData(from: days), isCurrent: days.contains { $0.isCurrent })
+			.init(
+				days: makeDaysData(from: days),
+				isCurrent: days.contains { $0.isCurrent },
+				isFirstInMonth: sameMonthDays.first?.weekOfMonth == days.first?.weekOfMonth
+			)
 		}
 	}
 
