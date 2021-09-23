@@ -17,23 +17,20 @@ struct YearData: Hashable {
 struct YearView: View {
 	let data: YearData
 
-	let dayTapAction: (Int, Int, Int) -> Void
-
 	let onMonthAppear: (MonthData) -> Void
 
 	var body: some View {
 		Section {
 			Text(String(data.number))
 				.bold()
-				.font(.title).foregroundColor(data.isCurrent ? .accentColor : .primary)
+				.font(.title)
+				.foregroundColor(data.isCurrent ? .accentColor : .primary)
 
 			ForEach(data.months) { container in
-				MonthView(month: container) { week, day in
-					data.months.firstIndex { $0.id == container.id }.map { dayTapAction($0, week, day) }
-				}
-				.onAppear {
-					onMonthAppear(container.value)
-				}
+				MonthView(month: container)
+					.onAppear {
+						onMonthAppear(container.value)
+					}
 			}
 		}
 	}

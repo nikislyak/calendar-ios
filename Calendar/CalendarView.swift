@@ -13,7 +13,7 @@ struct CalendarView: View {
 
 	let initialMonth: UUID
 
-	@State private var monthForScrolling: UUID?
+	@State private var monthForScrolling: ScrollAction<UUID>?
 
 	var body: some View {
 		GeometryReader { proxy in
@@ -31,21 +31,26 @@ struct CalendarView: View {
 				ScrollViewReader { scrollProxy in
 					List {
 						ForEach(calendarViewModel.years) { container in
-							YearView(data: container.value) { month, week, day in
-							} onMonthAppear: { month in
+							YearView(data: container.value) { month in
 								calendarViewModel.onAppear(of: month)
 							}
 						}
 					}
-					.onChange(of: monthForScrolling) { id in
-						if let id = id {
-							withAnimation {
-								scrollProxy.scrollTo(id, anchor: .top)
+					.onChange(of: monthForScrolling) { action in
+						if let action = action {
+							if action.animated {
+								withAnimation {
+									scrollProxy.scrollTo(action.item, anchor: .top)
+								}
+							} else {
+								scrollProxy.scrollTo(action.item, anchor: .top)
 							}
 							monthForScrolling = nil
 						}
 					}
-					.onAppear { scrollProxy.scrollTo(initialMonth, anchor: .top) }
+					.onAppear {
+						monthForScrolling = ScrollAction(item: initialMonth, animated: false)
+					}
 					.toolbar {
 						ToolbarItem(placement: .navigationBarTrailing) {
 							Button {} label: {
@@ -54,15 +59,19 @@ struct CalendarView: View {
 						}
 						ToolbarItemGroup(placement: .bottomBar) {
 							Button {
-								monthForScrolling = calendarViewModel.years
-									.first { $0.isCurrent }?.months
-									.first { $0.isCurrent }?.id
+								monthForScrolling = unwrap(
+									calendarViewModel.years
+										.first { $0.isCurrent }?.months
+										.first { $0.isCurrent }?.id,
+									true
+								)
+								.map(ScrollAction.init)
 							} label: {
 								Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
 							}
 						}
 					}
-					.listStyle(PlainListStyle())
+					.listStyle(.plain)
 				}
 			}
 		}

@@ -21,7 +21,7 @@ struct DayView: View {
 		GeometryReader { proxy in
 			Button(action: tapAction) {
 				Text(String(data.day.number))
-					.frame(maxWidth: proxy.size.width, maxHeight: proxy.size.height)
+					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			}
 			.background(
 				(data.day.isCurrent ? Color.accentColor : .clear)
@@ -29,7 +29,6 @@ struct DayView: View {
 					.cornerRadius(dimension(proxy: proxy))
 			)
 			.foregroundColor(data.day.isCurrent ? .white : .primary)
-			.position(x: proxy.size.width / 2, y: proxy.size.height / 2)
 		}
 	}
 

@@ -28,36 +28,33 @@ struct WeekStartPreferenceKey: PreferenceKey {
 	static var defaultValue: Value = [:]
 
 	static func reduce(value: inout Value, nextValue: () -> Value) {
-		value.merge(nextValue()) { _, new in new }
+		value.merge(nextValue()) { $1 }
 	}
 }
 
 struct WeekView: View {
 	@Environment(\.calendar) private var calendar
-
-	let parentID: UUID
+	
+	let monthID: UUID
 	let week: WeekData
-	let dayTapAction: (UUID) -> Void
-
+	
 	private let spacing: CGFloat = 8
-
+	
 	var body: some View {
 		GeometryReader { proxy in
-			HStack(alignment: .center, spacing: spacing) {
-				if week.days.first?.value.day.dayOfWeek.rawValue != calendar.firstWeekday {
+			HStack(spacing: spacing) {
+				if week.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
 					Spacer()
 				}
 				ForEach(week.days) { day in
-					DayView(data: day.value) {
-						dayTapAction(day.id)
-					}
-					.frame(width: (proxy.size.width - spacing * 6) / 7)
+					DayView(data: day.value) {}
+					.frame(width: max((proxy.size.width - spacing * 6) / 7, 0))
 					.anchorPreference(
 						key: WeekStartPreferenceKey.self,
 						value: .bounds
 					) { anchor in
 						guard day == week.days.first, week.isFirstInMonth else { return [:] }
-						return [parentID: WeekStartPreferenceKey.Data(monthID: parentID, rect: anchor)]
+						return [monthID: WeekStartPreferenceKey.Data(monthID: monthID, rect: anchor)]
 					}
 				}
 			}

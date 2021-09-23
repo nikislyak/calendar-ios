@@ -20,8 +20,6 @@ struct MonthView: View {
 
 	let month: Identified<MonthData>
 
-	let dayTapAction: (Int, Int) -> Void
-
 	@State private var preference: WeekStartPreferenceKey.Data?
 
 	var body: some View {
@@ -36,20 +34,9 @@ struct MonthView: View {
 						y: proxy.size.height / 2
 					)
 			}
-
 			ForEach(month.weeks) { week in
-				WeekView(
-					parentID: month.id,
-					week: week.value
-				) { id in
-					for week in month.weeks.enumerated() {
-						if let index = week.element.days.firstIndex(where: { $0.id == id }) {
-							dayTapAction(week.offset, index)
-							return
-						}
-					}
-				}
-				.buttonStyle(PlainButtonStyle())
+				WeekView(monthID: month.id, week: week.value)
+					.buttonStyle(PlainButtonStyle())
 			}
 		}
 		.onPreferenceChange(WeekStartPreferenceKey.self) { value in
