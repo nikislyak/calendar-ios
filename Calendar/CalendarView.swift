@@ -11,6 +11,7 @@ import SwiftUI
 struct CalendarView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
+	@Binding var currentYear: String
 	let initialMonth: UUID
 
 	@State private var monthForScrolling: ScrollAction<UUID>?
@@ -33,6 +34,9 @@ struct CalendarView: View {
 						ForEach(calendarViewModel.years) { container in
 							YearView(data: container.value) { month in
 								calendarViewModel.onAppear(of: month)
+							}
+							.onAppear {
+								currentYear = String(container.number)
 							}
 						}
 					}

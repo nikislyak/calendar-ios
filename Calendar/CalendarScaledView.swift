@@ -13,8 +13,10 @@ struct CalendarScaledView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
 	@State private var openedMonth: UUID?
+	@State private var currentYear = ""
 
 	@State private var yearForScrolling: UUID?
+	@State private var offsetY: CGFloat = 0
 
 	var body: some View {
 		GeometryReader { proxy in
@@ -45,10 +47,9 @@ struct CalendarScaledView: View {
 							}
 						}
 						.background(Color.clear)
-						.buttonStyle(PlainButtonStyle())
-					}
+						.buttonStyle(.plain)					}
 				}
-				.listStyle(GroupedListStyle())
+				.listStyle(.plain)
 				.listRowBackground(Color.clear)
 				.onChange(of: yearForScrolling) { id in
 					if let id = id {
@@ -75,6 +76,7 @@ struct CalendarScaledView: View {
 					}
 				}
 				.navigationBarTitleDisplayMode(.inline)
+				.navigationTitle(currentYear)
 			}
 		}
 	}
@@ -85,6 +87,7 @@ struct CalendarScaledView: View {
 			NavigationLink(
 				destination: CalendarView(
 					calendarViewModel: calendarViewModel,
+					currentYear: $currentYear,
 					initialMonth: month.id
 				),
 				tag: month.id,
