@@ -15,6 +15,7 @@ struct CalendarView: View {
 	let initialMonth: UUID
 
 	@State private var monthForScrolling: ScrollAction<UUID>?
+	@State private var weekStarts: [UUID: WeekStartPreferenceKey.Data] = [:]
 
 	var body: some View {
 		GeometryReader { proxy in
@@ -35,10 +36,14 @@ struct CalendarView: View {
 							YearView(data: container.value) { month in
 								calendarViewModel.onAppear(of: month)
 							}
+							.environment(\.weekStarts, weekStarts)
 							.onAppear {
 								currentYear = String(container.number)
 							}
 						}
+					}
+					.onPreferenceChange(WeekStartPreferenceKey.self) { value in
+						weekStarts = value
 					}
 					.onChange(of: monthForScrolling) { action in
 						if let action = action {

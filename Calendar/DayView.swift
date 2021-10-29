@@ -24,9 +24,9 @@ struct DayView: View {
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
 			}
 			.background(
-				(data.day.isCurrent ? Color.accentColor : .clear)
-					.frame(maxWidth: dimension(proxy: proxy), maxHeight: dimension(proxy: proxy), alignment: .center)
-					.cornerRadius(dimension(proxy: proxy))
+				Circle()
+					.fill(data.day.isCurrent ? Color.accentColor : .clear)
+					.frame(maxWidth: dimension(proxy: proxy), maxHeight: dimension(proxy: proxy))
 			)
 			.foregroundColor(data.day.isCurrent ? .white : .primary)
 		}

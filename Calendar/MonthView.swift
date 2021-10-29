@@ -17,10 +17,9 @@ struct MonthData: Hashable {
 
 struct MonthView: View {
 	@Environment(\.calendar) private var calendar
+	@Environment(\.weekStarts) private var weekStarts
 
 	let month: Identified<MonthData>
-
-	@State private var preference: WeekStartPreferenceKey.Data?
 
 	var body: some View {
 		Group {
@@ -30,17 +29,14 @@ struct MonthView: View {
 					.foregroundColor(month.isCurrent ? .accentColor : .primary)
 					.font(.title2)
 					.position(
-						x: preference.map { proxy[$0.rect] }?.midX ?? proxy.size.width / 2,
+						x: weekStarts[month.id].map { proxy[$0.center] }?.x ?? proxy.size.width / 2,
 						y: proxy.size.height / 2
 					)
 			}
 			ForEach(month.weeks) { week in
 				WeekView(monthID: month.id, week: week.value)
-					.buttonStyle(PlainButtonStyle())
+					.buttonStyle(.plain)
 			}
-		}
-		.onPreferenceChange(WeekStartPreferenceKey.self) { value in
-			value[month.id].map { preference = $0 }
 		}
 	}
 }
