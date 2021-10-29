@@ -32,7 +32,7 @@ struct WeekStartPreferenceKey: PreferenceKey {
 
 	typealias Value = [UUID: Data]
 
-	static var defaultValue: Value = [:]
+	static let defaultValue: Value = [:]
 
 	static func reduce(value: inout Value, nextValue: () -> Value) {
 		value.merge(nextValue()) { $1 }

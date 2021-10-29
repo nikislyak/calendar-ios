@@ -8,14 +8,25 @@
 import Foundation
 import SwiftUI
 
+enum ScrollStatePreferenceKey: PreferenceKey {
+	static let defaultValue: [UUID: CGRect] = [:]
+
+	static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
+		value.merge(nextValue()) { $1 }
+	}
+}
+
 struct CalendarView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
-	@Binding var currentYear: String
 	let initialMonth: UUID
+
+	let onYearAppear: (UUID) -> Void
 
 	@State private var monthForScrolling: ScrollAction<UUID>?
 	@State private var weekStarts: [UUID: WeekStartPreferenceKey.Data] = [:]
+	@State private var frames: [UUID: CGRect] = [:]
+	@State private var currentYear: UUID?
 
 	var body: some View {
 		GeometryReader { proxy in
@@ -37,10 +48,28 @@ struct CalendarView: View {
 								calendarViewModel.onAppear(of: month)
 							}
 							.environment(\.weekStarts, weekStarts)
-							.onAppear {
-								currentYear = String(container.number)
+							.onChange(of: frames) { newFrames in
+								newFrames[container.id]
+									.map(proxy.frame(in: .local).intersects)
+									.map { _ in
+										currentYear = container.id
+									}
 							}
+							.onChange(of: currentYear) { $0.map(onYearAppear) }
+							.background(
+								GeometryReader { proxy in
+									Color.clear.anchorPreference(
+										key: ScrollStatePreferenceKey.self,
+										value: .bounds
+									) { anchor in
+										[container.id: proxy[anchor]]
+									}
+								}
+							)
 						}
+					}
+					.onPreferenceChange(ScrollStatePreferenceKey.self) {
+						frames = $0
 					}
 					.onPreferenceChange(WeekStartPreferenceKey.self) { value in
 						weekStarts = value
@@ -60,28 +89,31 @@ struct CalendarView: View {
 					.onAppear {
 						monthForScrolling = ScrollAction(item: initialMonth, animated: false)
 					}
-					.toolbar {
-						ToolbarItem(placement: .navigationBarTrailing) {
-							Button {} label: {
-								Image(systemName: "magnifyingglass")
-							}
-						}
-						ToolbarItemGroup(placement: .bottomBar) {
-							Button {
-								monthForScrolling = unwrap(
-									calendarViewModel.years
-										.first { $0.isCurrent }?.months
-										.first { $0.isCurrent }?.id,
-									true
-								)
-								.map(ScrollAction.init)
-							} label: {
-								Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
-							}
-						}
-					}
+					.toolbar { makeToolbarItems() }
 					.listStyle(.plain)
 				}
+			}
+		}
+	}
+
+	@ToolbarContentBuilder
+	private func makeToolbarItems() -> some ToolbarContent {
+		ToolbarItem(placement: .navigationBarTrailing) {
+			Button {} label: {
+				Image(systemName: "magnifyingglass")
+			}
+		}
+		ToolbarItemGroup(placement: .bottomBar) {
+			Button {
+				monthForScrolling = unwrap(
+					calendarViewModel.years
+						.first { $0.isCurrent }?.months
+						.first { $0.isCurrent }?.id,
+					true
+				)
+				.map(ScrollAction.init)
+			} label: {
+				Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
 			}
 		}
 	}

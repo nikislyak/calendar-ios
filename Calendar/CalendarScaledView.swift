@@ -13,7 +13,7 @@ struct CalendarScaledView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
 	@State private var openedMonth: UUID?
-	@State private var currentYear = ""
+	@State private var yearFromDetailView: UUID?
 
 	@State private var yearForScrolling: UUID?
 	@State private var offsetY: CGFloat = 0
@@ -59,24 +59,13 @@ struct CalendarScaledView: View {
 						yearForScrolling = nil
 					}
 				}
-				.toolbar {
-					ToolbarItem(placement: .navigationBarTrailing) {
-						HStack {
-							Button {} label: {
-								Image(systemName: "magnifyingglass")
-							}
-						}
-					}
-					ToolbarItemGroup(placement: .bottomBar) {
-						Button {
-							yearForScrolling = calendarViewModel.years.first { $0.isCurrent }?.id
-						} label: {
-							Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
-						}
-					}
-				}
+				.toolbar { makeToolbarItems() }
 				.navigationBarTitleDisplayMode(.inline)
-				.navigationTitle(currentYear)
+				.navigationBarTitle(
+					calendarViewModel.years
+						.first { $0.id == yearFromDetailView }
+						.map { String($0.number) } ?? ""
+				)
 			}
 		}
 	}
@@ -87,9 +76,8 @@ struct CalendarScaledView: View {
 			NavigationLink(
 				destination: CalendarView(
 					calendarViewModel: calendarViewModel,
-					currentYear: $currentYear,
 					initialMonth: month.id
-				),
+				) { yearFromDetailView = $0; yearForScrolling = $0 },
 				tag: month.id,
 				selection: $openedMonth
 			) {
@@ -101,6 +89,24 @@ struct CalendarScaledView: View {
 				openedMonth = $0
 			}
 			.onAppear { calendarViewModel.onAppear(of: month.value) }
+		}
+	}
+
+	@ToolbarContentBuilder
+	private func makeToolbarItems() -> some ToolbarContent {
+		ToolbarItem(placement: .navigationBarTrailing) {
+			HStack {
+				Button {} label: {
+					Image(systemName: "magnifyingglass")
+				}
+			}
+		}
+		ToolbarItemGroup(placement: .bottomBar) {
+			Button {
+				yearForScrolling = calendarViewModel.years.first { $0.isCurrent }?.id
+			} label: {
+				Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+			}
 		}
 	}
 }
