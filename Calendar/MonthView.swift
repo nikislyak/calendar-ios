@@ -35,7 +35,6 @@ struct MonthView: View {
 			}
 			ForEach(month.weeks) { week in
 				WeekView(monthID: month.id, week: week.value)
-					.buttonStyle(.plain)
 			}
 		}
 	}

@@ -91,6 +91,7 @@ struct CalendarView: View {
 					}
 					.toolbar { makeToolbarItems() }
 					.listStyle(.plain)
+					.buttonStyle(.plain)
 				}
 			}
 		}

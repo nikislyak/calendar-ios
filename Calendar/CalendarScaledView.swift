@@ -47,7 +47,8 @@ struct CalendarScaledView: View {
 							}
 						}
 						.background(Color.clear)
-						.buttonStyle(.plain)					}
+						.buttonStyle(.plain)
+					}
 				}
 				.listStyle(.plain)
 				.listRowBackground(Color.clear)

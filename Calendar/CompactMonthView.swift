@@ -15,32 +15,37 @@ struct CompactMonthView: View {
 	let monthData: Identified<MonthData>
 	let tapAction: (UUID) -> Void
 
-	private let daysSpacing: CGFloat = 3
+	private let daysSpacing: CGFloat = 0
 
 	var body: some View {
-		Button(action: { tapAction(monthData.id) }) {
+		Button {
+			tapAction(monthData.id)
+		} label: {
 			VStack(alignment: .leading, spacing: 4) {
 				Text(monthData.name)
 					.bold()
 					.font(.title3)
 					.foregroundColor(monthData.isCurrent ? .accentColor : .primary)
 
-				ForEach(monthData.weeks) { week in
-					HStack(spacing: daysSpacing) {
-						if week.value.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
-							Spacer()
-						}
-						ForEach(week.days) { day in
-							Text(String(day.day.number))
-								.font(.system(size: 10))
-								.foregroundColor(dayNumberColor(day: day.value))
-								.fontWeight(.semibold)
-								.kerning(-0.5)
-								.frame(width: dayWidth)
-								.background(
-									(day.day.isCurrent ? Color.accentColor : .clear)
-										.cornerRadius(dayWidth)
-								)
+				VStack(alignment: .leading, spacing: 0) {
+					ForEach(monthData.weeks) { week in
+						HStack(spacing: daysSpacing) {
+							if week.value.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
+								Spacer()
+							}
+							ForEach(week.days) { day in
+								Text(String(day.day.number))
+									.font(.system(size: 10))
+									.foregroundColor(dayNumberColor(day: day.value))
+									.fontWeight(.semibold)
+									.kerning(-0.5)
+									.frame(width: dayWidth)
+									.padding([.top, .bottom], 2)
+									.background(
+										Circle()
+											.fill(day.day.isCurrent ? Color.accentColor : .clear)
+									)
+							}
 						}
 					}
 				}
