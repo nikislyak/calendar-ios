@@ -22,20 +22,18 @@ struct MonthView: View {
 	let month: Identified<MonthData>
 
 	var body: some View {
-		Group {
-			GeometryReader { proxy in
-				Text(calendar.shortStandaloneMonthSymbols[month.month.rawValue - 1].capitalized)
-					.fontWeight(.medium)
-					.foregroundColor(month.isCurrent ? .accentColor : .primary)
-					.font(.title2)
-					.position(
-						x: weekStarts[month.id].map { proxy[$0.center] }?.x ?? proxy.size.width / 2,
-						y: proxy.size.height / 2
-					)
-			}
-			ForEach(month.weeks) { week in
-				WeekView(monthID: month.id, week: week.value)
-			}
+		GeometryReader { proxy in
+			Text(calendar.shortStandaloneMonthSymbols[month.month.rawValue - 1].capitalized)
+				.fontWeight(.medium)
+				.foregroundColor(month.isCurrent ? .accentColor : .primary)
+				.font(.title2)
+				.position(
+					x: weekStarts[month.id].map { proxy[$0.center] }?.x ?? proxy.size.width / 2,
+					y: proxy.size.height / 2
+				)
+		}
+		ForEach(month.weeks) { week in
+			WeekView(monthID: month.id, week: week.value)
 		}
 	}
 }

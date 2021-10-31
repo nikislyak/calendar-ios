@@ -20,79 +20,60 @@ struct CalendarView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
 	let initialMonth: UUID
-
-	let onYearAppear: (UUID) -> Void
+	@Binding var currentYear: UUID?
 
 	@State private var monthForScrolling: ScrollAction<UUID>?
 	@State private var weekStarts: [UUID: WeekStartPreferenceKey.Data] = [:]
 	@State private var frames: [UUID: CGRect] = [:]
-	@State private var currentYear: UUID?
 
 	var body: some View {
-		GeometryReader { proxy in
-			VStack(spacing: 0) {
-				HStack(alignment: .center, spacing: 4) {
-					ForEach(calendarViewModel.headerData.indices) {
-						Text("\(calendarViewModel.localizedString(for: calendarViewModel.headerData[$0]))")
-							.font(.subheadline)
-							.frame(maxWidth: (proxy.size.width - 24) / 7)
+		GeometryReader { listProxy in
+			ScrollViewReader { scrollProxy in
+				List {
+					ForEach(calendarViewModel.years) { container in
+						YearView(data: container.value) { month in
+							calendarViewModel.onAppear(of: month)
+						}
+						.onChange(of: frames) { newFrames in
+							handleFramesChange(newFrames, container: container, listProxy: listProxy)
+						}
+						.background(
+							Color.clear
+								.anchorPreference(
+									key: ScrollStatePreferenceKey.self,
+									value: .bounds
+								) { anchor in
+									[container.id: listProxy[anchor]]
+								}
+						)
 					}
 				}
-				.padding([.leading, .trailing], 16)
-				.padding([.top, .bottom], 4)
-
-				ScrollViewReader { scrollProxy in
-					List {
-						ForEach(calendarViewModel.years) { container in
-							YearView(data: container.value) { month in
-								calendarViewModel.onAppear(of: month)
-							}
-							.environment(\.weekStarts, weekStarts)
-							.onChange(of: frames) { newFrames in
-								newFrames[container.id]
-									.map(proxy.frame(in: .local).intersects)
-									.map { _ in
-										currentYear = container.id
-									}
-							}
-							.onChange(of: currentYear) { $0.map(onYearAppear) }
-							.background(
-								GeometryReader { proxy in
-									Color.clear.anchorPreference(
-										key: ScrollStatePreferenceKey.self,
-										value: .bounds
-									) { anchor in
-										[container.id: proxy[anchor]]
-									}
-								}
-							)
-						}
-					}
-					.onPreferenceChange(ScrollStatePreferenceKey.self) {
-						frames = $0
-					}
-					.onPreferenceChange(WeekStartPreferenceKey.self) { value in
-						weekStarts = value
-					}
-					.onChange(of: monthForScrolling) { action in
-						if let action = action {
-							if action.animated {
-								withAnimation {
-									scrollProxy.scrollTo(action.item, anchor: .top)
-								}
-							} else {
+				.environment(\.weekStarts, weekStarts)
+				.onPreferenceChange(ScrollStatePreferenceKey.self) {
+					print($0)
+					frames = $0
+				}
+				.onPreferenceChange(WeekStartPreferenceKey.self) { value in
+					weekStarts = value
+				}
+				.onChange(of: monthForScrolling) { action in
+					if let action = action {
+						if action.animated {
+							withAnimation {
 								scrollProxy.scrollTo(action.item, anchor: .top)
 							}
-							monthForScrolling = nil
+						} else {
+							scrollProxy.scrollTo(action.item, anchor: .top)
 						}
+						monthForScrolling = nil
 					}
-					.onAppear {
-						monthForScrolling = ScrollAction(item: initialMonth, animated: false)
-					}
-					.toolbar { makeToolbarItems() }
-					.listStyle(.plain)
-					.buttonStyle(.plain)
 				}
+				.onAppear {
+					monthForScrolling = ScrollAction(item: initialMonth, animated: false)
+				}
+				.toolbar { makeToolbarItems() }
+				.listStyle(.plain)
+				.buttonStyle(.plain)
 			}
 		}
 	}
@@ -117,5 +98,38 @@ struct CalendarView: View {
 				Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
 			}
 		}
+	}
+
+	private func handleFramesChange(
+		_ newFrames: [UUID: CGRect],
+		container: Identified<YearData>,
+		listProxy: GeometryProxy
+	) {
+		let listFrame = listProxy.frame(in: .local)
+		let safeAreaFrame = listFrame.inset(
+			by: .init(
+				top: listProxy.safeAreaInsets.top,
+				left: 0,
+				bottom: 0,
+				right: 0
+			)
+		)
+		let halfOfFrame = safeAreaFrame.inset(
+			by: .init(
+				top: 0,
+				left: 0,
+				bottom: safeAreaFrame.height / 2,
+				right: 0
+			)
+		)
+		newFrames[container.id]
+			.flatMap {
+				halfOfFrame.intersects($0) ? $0 : nil
+			}
+			.map {
+				if $0.intersection(halfOfFrame).height >= safeAreaFrame.height / 2 {
+					currentYear = container.id
+				}
+			}
 	}
 }

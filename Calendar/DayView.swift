@@ -22,17 +22,12 @@ struct DayView: View {
 			Button(action: tapAction) {
 				Text(String(data.day.number))
 					.frame(maxWidth: .infinity, maxHeight: .infinity)
+					.background(
+						Circle()
+							.fill(data.day.isCurrent ? Color.accentColor : .clear)
+					)
+					.foregroundColor(data.day.isCurrent ? .white : .primary)
 			}
-			.background(
-				Circle()
-					.fill(data.day.isCurrent ? Color.accentColor : .clear)
-					.frame(maxWidth: dimension(proxy: proxy), maxHeight: dimension(proxy: proxy))
-			)
-			.foregroundColor(data.day.isCurrent ? .white : .primary)
 		}
-	}
-
-	private func dimension(proxy: GeometryProxy) -> CGFloat {
-		min(proxy.size.width, proxy.size.height)
 	}
 }

@@ -60,6 +60,9 @@ struct CalendarScaledView: View {
 						yearForScrolling = nil
 					}
 				}
+				.onChange(of: yearFromDetailView) {
+					yearForScrolling = $0
+				}
 				.toolbar { makeToolbarItems() }
 				.navigationBarTitleDisplayMode(.inline)
 				.navigationBarTitle(
@@ -77,8 +80,9 @@ struct CalendarScaledView: View {
 			NavigationLink(
 				destination: CalendarView(
 					calendarViewModel: calendarViewModel,
-					initialMonth: month.id
-				) { yearFromDetailView = $0; yearForScrolling = $0 },
+					initialMonth: month.id,
+					currentYear: $yearFromDetailView
+				),
 				tag: month.id,
 				selection: $openedMonth
 			) {
