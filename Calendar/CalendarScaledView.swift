@@ -15,7 +15,7 @@ struct CalendarScaledView: View {
 	@State private var openedMonth: UUID?
 	@State private var yearFromDetailView: UUID?
 
-	@State private var yearForScrolling: UUID?
+	@State private var yearScrollAction: ScrollAction<UUID>?
 	@State private var offsetY: CGFloat = 0
 
 	var body: some View {
@@ -32,8 +32,8 @@ struct CalendarScaledView: View {
 							LazyVGrid(
 								columns: .init(
 									repeating: .init(
-										.fixed((proxy.size.width - 32 - 32) / 3),
-										spacing: 16,
+										.fixed((proxy.size.width - 16 - 32) / 3),
+										spacing: 8,
 										alignment: .top
 									),
 									count: 3
@@ -42,7 +42,7 @@ struct CalendarScaledView: View {
 								spacing: 24
 							) {
 								ForEach(year.months) { month in
-									makeCompactMonthView(month: month, width: (proxy.size.width - 32 - 32) / 3)
+									makeCompactMonthView(month: month, width: (proxy.size.width - 16 - 32) / 3)
 								}
 							}
 						}
@@ -52,16 +52,9 @@ struct CalendarScaledView: View {
 				}
 				.listStyle(.plain)
 				.listRowBackground(Color.clear)
-				.onChange(of: yearForScrolling) { id in
-					if let id = id {
-						withAnimation {
-							scrollProxy.scrollTo(id, anchor: .top)
-						}
-						yearForScrolling = nil
-					}
-				}
+				.scrollAction(scrollProxy: scrollProxy, action: $yearScrollAction)
 				.onChange(of: yearFromDetailView) {
-					yearForScrolling = $0
+					yearScrollAction = $0.map { .init(item: $0, animated: false, anchor: .top) }
 				}
 				.toolbar { makeToolbarItems() }
 				.navigationBarTitleDisplayMode(.inline)
@@ -108,7 +101,9 @@ struct CalendarScaledView: View {
 		}
 		ToolbarItemGroup(placement: .bottomBar) {
 			Button {
-				yearForScrolling = calendarViewModel.years.first { $0.isCurrent }?.id
+				yearScrollAction = calendarViewModel.years
+					.first { $0.isCurrent }
+					.map { .init(item: $0.id, animated: true, anchor: .top) }
 			} label: {
 				Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
 			}

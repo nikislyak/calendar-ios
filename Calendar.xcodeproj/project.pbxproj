@@ -18,6 +18,7 @@
 		C893C87826E6ACF900FB2E4F /* YearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87726E6ACF900FB2E4F /* YearView.swift */; };
 		C893C87A26E6AD6200FB2E4F /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87926E6AD6200FB2E4F /* CalendarView.swift */; };
 		C893C87C26E6AEEA00FB2E4F /* CalendarScaledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */; };
+		C8AC1A33273046BD00EC4D83 /* View+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AC1A32273046BD00EC4D83 /* View+extensions.swift */; };
 		C8B1082726EA805800E4081D /* Localization.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8B1082926EA805800E4081D /* Localization.strings */; };
 		C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */; };
 		C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91C26DFC51C00E1D440 /* Identified.swift */; };
@@ -40,6 +41,7 @@
 		C893C87726E6ACF900FB2E4F /* YearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearView.swift; sourceTree = "<group>"; };
 		C893C87926E6AD6200FB2E4F /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarScaledView.swift; sourceTree = "<group>"; };
+		C8AC1A32273046BD00EC4D83 /* View+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+extensions.swift"; sourceTree = "<group>"; };
 		C8B1082826EA805800E4081D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localization.strings; sourceTree = "<group>"; };
 		C8B1082A26EA805D00E4081D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localization.strings; sourceTree = "<group>"; };
 		C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
@@ -87,6 +89,7 @@
 				C8EA33B726DC0A8700B9C838 /* RootView.swift */,
 				C893C87926E6AD6200FB2E4F /* CalendarView.swift */,
 				6FCCB20426FCC55C00B6E83A /* Auxiliary.swift */,
+				C8AC1A32273046BD00EC4D83 /* View+extensions.swift */,
 				C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */,
 				40127E9626F9E0E900C9F265 /* CompactMonthView.swift */,
 				C893C87726E6ACF900FB2E4F /* YearView.swift */,
@@ -197,6 +200,7 @@
 				40127E9726F9E0E900C9F265 /* CompactMonthView.swift in Sources */,
 				C893C87226E6AC9200FB2E4F /* DayView.swift in Sources */,
 				C893C87C26E6AEEA00FB2E4F /* CalendarScaledView.swift in Sources */,
+				C8AC1A33273046BD00EC4D83 /* View+extensions.swift in Sources */,
 				C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */,
 				C893C87426E6ACBC00FB2E4F /* WeekView.swift in Sources */,
 				C8E8C91F26DFC96300E1D440 /* CalendarComponentsManager.swift in Sources */,

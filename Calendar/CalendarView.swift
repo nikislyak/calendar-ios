@@ -56,21 +56,10 @@ struct CalendarView: View {
 				.onPreferenceChange(WeekStartPreferenceKey.self) { value in
 					weekStarts = value
 				}
-				.onChange(of: monthForScrolling) { action in
-					if let action = action {
-						if action.animated {
-							withAnimation {
-								scrollProxy.scrollTo(action.item, anchor: .top)
-							}
-						} else {
-							scrollProxy.scrollTo(action.item, anchor: .top)
-						}
-						monthForScrolling = nil
-					}
-				}
 				.onAppear {
-					monthForScrolling = ScrollAction(item: initialMonth, animated: false)
+					monthForScrolling = ScrollAction(item: initialMonth, animated: false, anchor: .top)
 				}
+				.scrollAction(scrollProxy: scrollProxy, action: $monthForScrolling)
 				.toolbar { makeToolbarItems() }
 				.listStyle(.plain)
 				.buttonStyle(.plain)
@@ -91,7 +80,8 @@ struct CalendarView: View {
 					calendarViewModel.years
 						.first { $0.isCurrent }?.months
 						.first { $0.isCurrent }?.id,
-					true
+					true,
+					.top
 				)
 				.map(ScrollAction.init)
 			} label: {

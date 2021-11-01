@@ -21,9 +21,9 @@ struct CompactMonthView: View {
 		Button {
 			tapAction(monthData.id)
 		} label: {
-			VStack(alignment: .leading, spacing: 4) {
+			VStack(alignment: .leading, spacing: 0) {
 				Text(monthData.name)
-					.bold()
+					.fontWeight(.semibold)
 					.font(.title3)
 					.foregroundColor(monthData.isCurrent ? .accentColor : .primary)
 
