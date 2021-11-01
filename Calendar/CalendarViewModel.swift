@@ -98,33 +98,54 @@ final class CalendarViewModel: ObservableObject {
 		manager.localizedString(for: month)
 	}
 
+	func onAppear(of year: YearData) {
+		Just((year, years))
+			.receive(on: queue)
+			.map { [manager] year, data -> AnyPublisher<[Identified<YearData>], Never> in
+				if year.number == data.first?.number {
+					if data.dropFirst().first == nil {
+						return Publishers
+							.Zip(
+								manager.makeDays(for: year.number - 1),
+								manager.makeDays(for: year.number + 1)
+							)
+							.map { [unowned self] in makeYearData(from: $0) + data + makeYearData(from: $1) }
+							.eraseToAnyPublisher()
+					} else {
+						return manager
+							.makeDays(for: year.number - 1)
+							.map { [unowned self] in makeYearData(from: $0) + data }
+							.eraseToAnyPublisher()
+					}
+				} else if year.number == data.last?.number {
+					return manager
+						.makeDays(for: year.number + 1)
+						.map { [unowned self] in data + makeYearData(from: $0) }
+						.eraseToAnyPublisher()
+				} else {
+					return Empty().eraseToAnyPublisher()
+				}
+			}
+			.switchToLatest()
+			.receive(on: DispatchQueue.main)
+			.assign(to: &$years)
+	}
+
 	func onAppear(of month: MonthData) {
 		guard let year = month.weeks.first?.days.first?.day.year,
 			  month.month == .december || month.month == .january else { return }
 		Just((year, years))
 			.receive(on: queue)
 			.map { [manager] year, data -> AnyPublisher<[Identified<YearData>], Never> in
-				if month.month == .december, data.binarySearchFirstIndex(where: {
-					$0.number < year + 1
-						? .orderedAscending
-						: $0.number == year + 1
-						? .orderedSame
-						: .orderedDescending
-
-				}) == nil {
+				if month.month == .december, year == data.last?.number {
 					return manager.makeDays(for: year + 1)
 						.map { [unowned self] in data + makeYearData(from: $0) }
 						.eraseToAnyPublisher()
-				} else if month.month == .january, data.binarySearchFirstIndex(where: {
-					$0.number < year - 1
-						? .orderedAscending
-						: $0.number == year - 1
-						? .orderedSame
-						: .orderedDescending
-
-				}) == nil {
-//					data = makeYearData(from: manager.makeDays(for: year - 1)) + data
-					return Empty().eraseToAnyPublisher()
+				} else if month.month == .january, year == data.first?.number {
+					return manager
+						.makeDays(for: year - 1)
+						.map { [unowned self] in makeYearData(from: $0) + data }
+						.eraseToAnyPublisher()
 				} else {
 					return Empty().eraseToAnyPublisher()
 				}

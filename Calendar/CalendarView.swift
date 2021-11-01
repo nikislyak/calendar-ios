@@ -50,7 +50,6 @@ struct CalendarView: View {
 				}
 				.environment(\.weekStarts, weekStarts)
 				.onPreferenceChange(ScrollStatePreferenceKey.self) {
-					print($0)
 					frames = $0
 				}
 				.onPreferenceChange(WeekStartPreferenceKey.self) { value in

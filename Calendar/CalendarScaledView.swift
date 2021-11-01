@@ -18,40 +18,45 @@ struct CalendarScaledView: View {
 	@State private var yearScrollAction: ScrollAction<UUID>?
 	@State private var offsetY: CGFloat = 0
 
+	private let spacing: CGFloat = 8
+
 	var body: some View {
-		GeometryReader { proxy in
+		GeometryReader { listProxy in
 			ScrollViewReader { scrollProxy in
 				List {
 					ForEach(calendarViewModel.years) { year in
-						Section(
-							header: Text(String(year.number))
-								.foregroundColor(year.isCurrent ? .accentColor : .primary)
-								.font(.title)
-								.bold()
-						) {
-							LazyVGrid(
-								columns: .init(
-									repeating: .init(
-										.fixed((proxy.size.width - 16 - 32) / 3),
-										spacing: 8,
-										alignment: .top
-									),
-									count: 3
+						Text(String(year.number))
+							.foregroundColor(year.isCurrent ? .accentColor : .primary)
+							.font(.largeTitle)
+							.bold()
+
+						LazyVGrid(
+							columns: .init(
+								repeating: .init(
+									.fixed((listProxy.size.width - spacing * 2 - 32) / 3),
+									spacing: spacing,
+									alignment: .top
 								),
-								alignment: .center,
-								spacing: 24
-							) {
-								ForEach(year.months) { month in
-									makeCompactMonthView(month: month, width: (proxy.size.width - 16 - 32) / 3)
-								}
+								count: 3
+							),
+							alignment: .center,
+							spacing: 36
+						) {
+							ForEach(year.months) { month in
+								makeCompactMonthView(
+									month: month,
+									width: (listProxy.size.width - spacing * 2 - 32) / 3
+								)
 							}
 						}
-						.background(Color.clear)
-						.buttonStyle(.plain)
+						.onAppear {
+							calendarViewModel.onAppear(of: year.value)
+						}
 					}
 				}
 				.listStyle(.plain)
 				.listRowBackground(Color.clear)
+				.buttonStyle(.plain)
 				.scrollAction(scrollProxy: scrollProxy, action: $yearScrollAction)
 				.onChange(of: yearFromDetailView) {
 					yearScrollAction = $0.map { .init(item: $0, animated: false, anchor: .top) }
@@ -86,7 +91,6 @@ struct CalendarScaledView: View {
 			CompactMonthView(width: width, monthData: month) {
 				openedMonth = $0
 			}
-			.onAppear { calendarViewModel.onAppear(of: month.value) }
 		}
 	}
 
