@@ -14,7 +14,7 @@ struct WeekData: Hashable {
 }
 
 struct WeekStartPreferenceKey: PreferenceKey {
-	typealias Value = [UUID: Anchor<CGPoint>]
+	typealias Value = [UUID: Anchor<CGRect>]
 
 	static let defaultValue: Value = [:]
 
@@ -42,7 +42,7 @@ struct WeekView: View {
 					.frame(width: max((proxy.size.width - spacing * 6) / 7, 0))
 					.anchorPreference(
 						key: WeekStartPreferenceKey.self,
-						value: .center
+						value: .bounds
 					) { anchor in
 						guard day == week.days.first, week.isFirstInMonth else { return [:] }
 						return [monthID: anchor]

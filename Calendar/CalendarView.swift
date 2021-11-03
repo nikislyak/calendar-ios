@@ -46,6 +46,7 @@ struct CalendarView: View {
 									[container.id: anchor]
 								}
 						)
+						.listRowSeparator(.hidden)
 					}
 				}
 				.environmentObject(layoutState)

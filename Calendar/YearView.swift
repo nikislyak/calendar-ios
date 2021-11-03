@@ -20,10 +20,6 @@ struct YearView: View {
 	let onMonthAppear: (MonthData) -> Void
 	
 	var body: some View {
-		Text(String(data.number))
-			.bold()
-			.font(.title)
-			.foregroundColor(data.isCurrent ? .accentColor : .primary)
 		ForEach(data.months) { container in
 			MonthView(month: container)
 				.onAppear {
