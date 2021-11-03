@@ -18,6 +18,8 @@ struct CalendarScaledView: View {
 	@State private var yearScrollAction: ScrollAction<UUID>?
 	@State private var offsetY: CGFloat = 0
 
+	@StateObject private var calendarState = CalendarState()
+
 	private let spacing: CGFloat = 8
 
 	var body: some View {
@@ -25,10 +27,7 @@ struct CalendarScaledView: View {
 			ScrollViewReader { scrollProxy in
 				List {
 					ForEach(calendarViewModel.years) { year in
-						Text(String(year.number))
-							.foregroundColor(year.isCurrent ? .accentColor : .primary)
-							.font(.largeTitle)
-							.bold()
+						makeHeader(from: year)
 
 						LazyVGrid(
 							columns: .init(
@@ -63,13 +62,17 @@ struct CalendarScaledView: View {
 				}
 				.toolbar { makeToolbarItems() }
 				.navigationBarTitleDisplayMode(.inline)
-				.navigationBarTitle(
-					calendarViewModel.years
-						.first { $0.id == yearFromDetailView }
-						.map { String($0.number) } ?? ""
-				)
+				.navigationBarTitle(calendarState.currentYear.map(String.init) ?? "")
 			}
 		}
+	}
+
+	@ViewBuilder
+	private func makeHeader(from year: Identified<YearData>) -> some View {
+		Text(String(year.number))
+			.foregroundColor(year.isCurrent ? .accentColor : .primary)
+			.font(.largeTitle)
+			.bold()
 	}
 
 	@ViewBuilder
@@ -78,9 +81,9 @@ struct CalendarScaledView: View {
 			NavigationLink(
 				destination: CalendarView(
 					calendarViewModel: calendarViewModel,
-					initialMonth: month.id,
-					currentYear: $yearFromDetailView
-				),
+					initialMonth: month.id
+				)
+				.environmentObject(calendarState),
 				tag: month.id,
 				selection: $openedMonth
 			) {

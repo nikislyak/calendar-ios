@@ -13,24 +13,8 @@ struct WeekData: Hashable {
 	let isFirstInMonth: Bool
 }
 
-extension EnvironmentValues {
-	var weekStarts: [UUID: WeekStartPreferenceKey.Data] {
-		get { self[WeekStartsKey.self] }
-		set { self[WeekStartsKey.self] = newValue }
-	}
-}
-
-private struct WeekStartsKey: EnvironmentKey {
-	static var defaultValue: [UUID: WeekStartPreferenceKey.Data] = [:]
-}
-
 struct WeekStartPreferenceKey: PreferenceKey {
-	struct Data: Equatable {
-		let monthID: UUID
-		let center: Anchor<CGPoint>
-	}
-
-	typealias Value = [UUID: Data]
+	typealias Value = [UUID: Anchor<CGPoint>]
 
 	static let defaultValue: Value = [:]
 
@@ -61,7 +45,7 @@ struct WeekView: View {
 						value: .center
 					) { anchor in
 						guard day == week.days.first, week.isFirstInMonth else { return [:] }
-						return [monthID: WeekStartPreferenceKey.Data(monthID: monthID, center: anchor)]
+						return [monthID: anchor]
 					}
 				}
 			}

@@ -9,9 +9,9 @@ import Foundation
 import SwiftUI
 
 enum ScrollStatePreferenceKey: PreferenceKey {
-	static let defaultValue: [UUID: CGRect] = [:]
+	static let defaultValue: [UUID: Anchor<CGRect>] = [:]
 
-	static func reduce(value: inout [UUID: CGRect], nextValue: () -> [UUID: CGRect]) {
+	static func reduce(value: inout [UUID: Anchor<CGRect>], nextValue: () -> [UUID: Anchor<CGRect>]) {
 		value.merge(nextValue()) { $1 }
 	}
 }
@@ -20,11 +20,11 @@ struct CalendarView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
 	let initialMonth: UUID
-	@Binding var currentYear: UUID?
 
 	@State private var monthForScrolling: ScrollAction<UUID>?
-	@State private var weekStarts: [UUID: WeekStartPreferenceKey.Data] = [:]
-	@State private var frames: [UUID: CGRect] = [:]
+	@State private var frames: [UUID: Anchor<CGRect>] = [:]
+	@EnvironmentObject private var calendarState: CalendarState
+	@StateObject private var layoutState = CalendarLayoutState()
 
 	var body: some View {
 		GeometryReader { listProxy in
@@ -43,17 +43,17 @@ struct CalendarView: View {
 									key: ScrollStatePreferenceKey.self,
 									value: .bounds
 								) { anchor in
-									[container.id: listProxy[anchor]]
+									[container.id: anchor]
 								}
 						)
 					}
 				}
-				.environment(\.weekStarts, weekStarts)
+				.environmentObject(layoutState)
 				.onPreferenceChange(ScrollStatePreferenceKey.self) {
 					frames = $0
 				}
 				.onPreferenceChange(WeekStartPreferenceKey.self) { value in
-					weekStarts = value
+					layoutState.weekStarts = value
 				}
 				.onAppear {
 					monthForScrolling = ScrollAction(item: initialMonth, animated: false, anchor: .top)
@@ -63,6 +63,9 @@ struct CalendarView: View {
 				.listStyle(.plain)
 				.buttonStyle(.plain)
 			}
+		}
+		.onDisappear {
+			calendarState.currentYear = nil
 		}
 	}
 
@@ -90,7 +93,7 @@ struct CalendarView: View {
 	}
 
 	private func handleFramesChange(
-		_ newFrames: [UUID: CGRect],
+		_ newFrames: [UUID: Anchor<CGRect>],
 		container: Identified<YearData>,
 		listProxy: GeometryProxy
 	) {
@@ -112,12 +115,13 @@ struct CalendarView: View {
 			)
 		)
 		newFrames[container.id]
-			.flatMap {
-				halfOfFrame.intersects($0) ? $0 : nil
+			.flatMap { (anchor: Anchor<CGRect>) -> CGRect? in
+				let frame = listProxy[anchor]
+				return halfOfFrame.intersects(frame) ? frame : nil
 			}
 			.map {
 				if $0.intersection(halfOfFrame).height >= safeAreaFrame.height / 2 {
-					currentYear = container.id
+					calendarState.currentYear = container.number
 				}
 			}
 	}
