@@ -79,7 +79,7 @@ final class CalendarViewModel: ObservableObject {
 	}
 
 	private func makeDaysData<C: Collection>(from sameWeekDays: C) -> [Identified<DayData>] where C.Element == Day {
-		sameWeekDays.map { .init(id: .init(), value: .init(day: $0, isSelected: false)) }
+		sameWeekDays.map { .init(id: .init(), value: .init(day: $0, isSelected: false) {}) }
 	}
 
 	func makeInitialData() {

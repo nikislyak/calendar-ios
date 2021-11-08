@@ -37,7 +37,7 @@ struct CalendarView: View {
 						.onChange(of: frames) { newFrames in
 							handleFramesChange(newFrames, container: container, listProxy: listProxy)
 						}
-						.background(
+						.background {
 							Color.clear
 								.anchorPreference(
 									key: ScrollStatePreferenceKey.self,
@@ -45,19 +45,22 @@ struct CalendarView: View {
 								) { anchor in
 									[container.id: anchor]
 								}
-						)
+						}
 						.listRowSeparator(.hidden)
+						.listRowInsets(.zero)
 					}
 				}
 				.environmentObject(layoutState)
 				.onPreferenceChange(ScrollStatePreferenceKey.self) {
 					frames = $0
 				}
-				.onPreferenceChange(WeekStartPreferenceKey.self) { value in
-					layoutState.weekStarts = value
+				.onPreferenceChange(WeekLayoutPreferenceKey.self) { value in
+					layoutState.weekLayouts = value
 				}
 				.onAppear {
-					monthForScrolling = ScrollAction(item: initialMonth, animated: false, anchor: .top)
+					DispatchQueue.main.async {
+						monthForScrolling = ScrollAction(item: initialMonth, animated: false, anchor: .top)
+					}
 				}
 				.scrollAction(scrollProxy: scrollProxy, action: $monthForScrolling)
 				.toolbar { makeToolbarItems() }

@@ -13,42 +13,47 @@ struct WeekData: Hashable {
 	let isFirstInMonth: Bool
 }
 
-struct WeekStartPreferenceKey: PreferenceKey {
-	typealias Value = [UUID: Anchor<CGRect>]
+struct WeekLayoutPreferenceKey: PreferenceKey {
+	typealias Value = [UUID: [UUID: Anchor<CGRect>]]
 
 	static let defaultValue: Value = [:]
 
 	static func reduce(value: inout Value, nextValue: () -> Value) {
-		value.merge(nextValue()) { $1 }
+		value.merge(nextValue()) { $0.merging($1) { $1 } }
 	}
 }
 
 struct WeekView: View {
 	@Environment(\.calendar) private var calendar
-	
-	let monthID: UUID
-	let week: WeekData
-	
+
+	let week: Identified<WeekData>
+
 	private let spacing: CGFloat = 8
-	
+
 	var body: some View {
-		GeometryReader { proxy in
-			HStack(spacing: spacing) {
-				if week.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
-					Spacer()
+		HStack(spacing: spacing) {
+			if week.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
+				ForEach(0 ..< 7 - week.days.count) { _ in
+					Color.clear
 				}
-				ForEach(week.days) { day in
-					DayView(data: day.value) {}
-					.frame(width: max((proxy.size.width - spacing * 6) / 7, 0))
+			}
+			ForEach(week.days) { day in
+				DayView(data: day.value)
 					.anchorPreference(
-						key: WeekStartPreferenceKey.self,
+						key: WeekLayoutPreferenceKey.self,
 						value: .bounds
 					) { anchor in
-						guard day == week.days.first, week.isFirstInMonth else { return [:] }
-						return [monthID: anchor]
+						[week.id: [day.id: anchor]]
 					}
+			}
+			if week.days.last?.day.dayOfWeek.rawValue != (calendar.firstWeekday + 6)
+				.quotientAndRemainder(dividingBy: 7).remainder {
+				ForEach(0 ..< 7 - week.days.count) { _ in
+					Color.clear
 				}
 			}
 		}
+		.padding([.top, .bottom], 6)
+		.padding([.leading, .trailing])
 	}
 }

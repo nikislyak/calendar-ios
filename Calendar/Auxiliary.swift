@@ -35,3 +35,7 @@ extension ScrollAction {
 		self.init(item: tuple.0, animated: tuple.1, anchor: tuple.2)
 	}
 }
+
+extension EdgeInsets {
+	static let zero = EdgeInsets(top: 0, leading: 0, bottom: 0, trailing: 0)
+}

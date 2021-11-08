@@ -9,5 +9,5 @@ import SwiftUI
 import Combine
 
 final class CalendarLayoutState: ObservableObject {
-	@Published var weekStarts: WeekStartPreferenceKey.Value = [:]
+	@Published var weekLayouts: WeekLayoutPreferenceKey.Value = [:]
 }

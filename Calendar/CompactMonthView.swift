@@ -41,10 +41,10 @@ struct CompactMonthView: View {
 									.kerning(-0.5)
 									.frame(width: dayWidth)
 									.padding([.top, .bottom], 2)
-									.background(
+									.background {
 										Circle()
 											.fill(day.day.isCurrent ? Color.accentColor : .clear)
-									)
+									}
 							}
 						}
 					}
