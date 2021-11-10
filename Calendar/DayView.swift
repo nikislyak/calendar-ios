@@ -37,7 +37,7 @@ struct DayView: View {
 						Circle()
 							.fill(data.day.isCurrent ? Color.accentColor : .clear)
 					}
-					.foregroundColor(data.day.isCurrent ? .white : .primary)
+					.foregroundColor(foregroundColor())
 
 				Circle()
 					.fill(.gray.opacity(0.5))
@@ -45,5 +45,9 @@ struct DayView: View {
 					.padding(8)
 			}
 		}
+	}
+
+	private func foregroundColor() -> Color {
+		data.day.isCurrent ? .white : data.day.isWeekend ? .secondary : .primary
 	}
 }

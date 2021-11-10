@@ -62,7 +62,10 @@ struct MonthView: View {
 			if let index = month.weeks.firstIndex(of: week), let rect = weekRect(weekIndex: index, proxy: proxy) {
 				Path { path in
 					path.move(to: .init(x: week == month.weeks.first && week.days.count < 7 ? rect.minX : 0, y: 0))
-					path.addLine(to: .init(x: week == month.weeks.last ? rect.maxX : proxy.size.width, y: 0))
+					path.addLine(to: .init(
+						x: week == month.weeks.last && week.days.count < 7 ? rect.maxX : proxy.size.width,
+						y: 0
+					))
 				}
 				.stroke(lineWidth: pixelLength)
 				.foregroundColor(.secondary.opacity(0.5))

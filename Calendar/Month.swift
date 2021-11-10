@@ -39,4 +39,5 @@ struct Day: Hashable {
 	let month: Month
 	let year: Int
 	let isCurrent: Bool
+	let isWeekend: Bool
 }
