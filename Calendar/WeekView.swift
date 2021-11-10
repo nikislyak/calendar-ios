@@ -5,43 +5,55 @@
 //  Created by Nikita Kislyakov1 on 06.09.2021.
 //
 
-import Foundation
 import SwiftUI
-
-struct WeekView: View {
-	@Environment(\.calendar) private var calendar
-
-	@Binding var firstWeekDayFrame: CGRect?
-
-	let parentID: UUID?
-	let data: WeekData
-	let dayTapAction: (UUID) -> Void
-
-	var body: some View {
-		GeometryReader { proxy in
-			HStack(alignment: .center, spacing: 8) {
-				if data.days.first?.value.day.dayOfWeek.rawValue != calendar.firstWeekday {
-					Spacer()
-				}
-				ForEach(data.days) { day in
-					GeometryReader { dayProxy in
-						DayView(data: day.value) {
-							dayTapAction(day.id)
-						}
-						.onAppear {
-							if let parentID = parentID, day == data.days.first {
-								firstWeekDayFrame = dayProxy.frame(in: .named(parentID))
-							}
-						}
-					}
-					.frame(width: (proxy.size.width - 48) / 7)
-				}
-			}
-		}
-	}
-}
 
 struct WeekData: Hashable {
 	var days: [Identified<DayData>]
 	let isCurrent: Bool
+	let isFirstInMonth: Bool
+}
+
+struct WeekLayoutPreferenceKey: PreferenceKey {
+	typealias Value = [UUID: [UUID: Anchor<CGRect>]]
+
+	static let defaultValue: Value = [:]
+
+	static func reduce(value: inout Value, nextValue: () -> Value) {
+		value.merge(nextValue()) { $0.merging($1) { $1 } }
+	}
+}
+
+struct WeekView: View {
+	@Environment(\.calendar) private var calendar
+
+	let week: Identified<WeekData>
+
+	private let spacing: CGFloat = 8
+
+	var body: some View {
+		HStack(spacing: spacing) {
+			if week.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
+				ForEach(0 ..< 7 - week.days.count) { _ in
+					Color.clear
+				}
+			}
+			ForEach(week.days) { day in
+				DayView(data: day.value)
+					.anchorPreference(
+						key: WeekLayoutPreferenceKey.self,
+						value: .bounds
+					) { anchor in
+						[week.id: [day.id: anchor]]
+					}
+			}
+			if week.days.last?.day.dayOfWeek.rawValue != (calendar.firstWeekday + 6)
+				.quotientAndRemainder(dividingBy: 7).remainder {
+				ForEach(0 ..< 7 - week.days.count) { _ in
+					Color.clear
+				}
+			}
+		}
+		.padding([.top, .bottom], 6)
+		.padding([.leading, .trailing])
+	}
 }

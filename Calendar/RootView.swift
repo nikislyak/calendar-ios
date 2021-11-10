@@ -14,7 +14,7 @@ struct RootView: View {
     var body: some View {
 		NavigationView {
 			CalendarScaledView(calendarViewModel: calendarViewModel)
-				.navigationViewStyle(StackNavigationViewStyle())
+				.navigationViewStyle(.stack)
 		}
 		.onAppear { calendarViewModel.makeInitialData() }
 		.accentColor(.red)

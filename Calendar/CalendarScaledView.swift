@@ -13,74 +13,66 @@ struct CalendarScaledView: View {
 	@ObservedObject var calendarViewModel: CalendarViewModel
 
 	@State private var openedMonth: UUID?
+	@State private var yearFromDetailView: UUID?
 
-	@State private var yearForScrolling: UUID?
+	@State private var yearScrollAction: ScrollAction<UUID>?
+	@State private var offsetY: CGFloat = 0
+
+	@StateObject private var calendarState = CalendarState()
+
+	private let spacing: CGFloat = 8
 
 	var body: some View {
-		GeometryReader { proxy in
+		GeometryReader { listProxy in
 			ScrollViewReader { scrollProxy in
 				List {
 					ForEach(calendarViewModel.years) { year in
-						Section(
-							header: Text(String(year.number))
-								.foregroundColor(year.isCurrent ? .accentColor : .primary)
-								.font(.title)
-								.bold()
-						) {
-							LazyVGrid(
-								columns: .init(
-									repeating: .init(
-										.fixed((proxy.size.width - 32 - 32) / 3),
-										spacing: 16,
-										alignment: .top
-									),
-									count: 3
+						makeHeader(from: year)
+
+						LazyVGrid(
+							columns: .init(
+								repeating: .init(
+									.fixed((listProxy.size.width - spacing * 2 - 32) / 3),
+									spacing: spacing,
+									alignment: .top
 								),
-								alignment: .center,
-								spacing: 24
-							) {
-								ForEach(year.months) { month in
-									makeCompactMonthView(month: month, width: (proxy.size.width - 32 - 32) / 3)
-								}
+								count: 3
+							),
+							alignment: .center,
+							spacing: 36
+						) {
+							ForEach(year.months) { month in
+								makeCompactMonthView(
+									month: month,
+									width: (listProxy.size.width - spacing * 2 - 32) / 3
+								)
 							}
 						}
-						.background(Color.clear)
-						.buttonStyle(PlainButtonStyle())
+						.onAppear {
+							calendarViewModel.onAppear(of: year.value)
+						}
 					}
 				}
-				.listStyle(GroupedListStyle())
+				.listStyle(.plain)
 				.listRowBackground(Color.clear)
-				.onChange(of: yearForScrolling) { id in
-					if let id = id {
-						withAnimation {
-							scrollProxy.scrollTo(id, anchor: .top)
-						}
-						yearForScrolling = nil
-					}
+				.buttonStyle(.plain)
+				.scrollAction(scrollProxy: scrollProxy, action: $yearScrollAction)
+				.onChange(of: yearFromDetailView) {
+					yearScrollAction = $0.map { .init(item: $0, animated: false, anchor: .top) }
 				}
-				.toolbar {
-					ToolbarItem(placement: .navigationBarTrailing) {
-						HStack {
-							Button {} label: {
-								Image(systemName: "magnifyingglass")
-							}
-						}
-					}
-					ToolbarItem(placement: .bottomBar) {
-						HStack {
-							Spacer()
-							Button {
-								yearForScrolling = calendarViewModel.years.first { $0.isCurrent }?.id
-							} label: {
-								Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
-							}
-							Spacer()
-						}
-					}
-				}
+				.toolbar { makeToolbarItems() }
 				.navigationBarTitleDisplayMode(.inline)
+				.navigationBarTitle(calendarState.currentYear.map(String.init) ?? "")
 			}
 		}
+	}
+
+	@ViewBuilder
+	private func makeHeader(from year: Identified<YearData>) -> some View {
+		Text(String(year.number))
+			.foregroundColor(year.isCurrent ? .accentColor : .primary)
+			.font(.largeTitle)
+			.bold()
 	}
 
 	@ViewBuilder
@@ -90,7 +82,8 @@ struct CalendarScaledView: View {
 				destination: CalendarView(
 					calendarViewModel: calendarViewModel,
 					initialMonth: month.id
-				),
+				)
+				.environmentObject(calendarState),
 				tag: month.id,
 				selection: $openedMonth
 			) {
@@ -101,7 +94,26 @@ struct CalendarScaledView: View {
 			CompactMonthView(width: width, monthData: month) {
 				openedMonth = $0
 			}
-			.onAppear { calendarViewModel.onAppear(of: month.value) }
+		}
+	}
+
+	@ToolbarContentBuilder
+	private func makeToolbarItems() -> some ToolbarContent {
+		ToolbarItem(placement: .navigationBarTrailing) {
+			HStack {
+				Button {} label: {
+					Image(systemName: "magnifyingglass")
+				}
+			}
+		}
+		ToolbarItemGroup(placement: .bottomBar) {
+			Button {
+				yearScrollAction = calendarViewModel.years
+					.first { $0.isCurrent }
+					.map { .init(item: $0.id, animated: true, anchor: .top) }
+			} label: {
+				Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+			}
 		}
 	}
 }

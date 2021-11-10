@@ -42,7 +42,9 @@ final class CalendarComponentsManager {
 						weekOfMonth: $0.weekOfMonth!,
 						month: Month(rawValue: $0.month!)!,
 						year: $0.year!,
-						isCurrent: calendar.isDate(calendar.date(from: $0)!, inSameDayAs: currentDate))
+						isCurrent: calendar.isDate(calendar.date(from: $0)!, inSameDayAs: currentDate),
+						isWeekend: calendar.isDateInWeekend(calendar.date(from: $0)!)
+					)
 				}
 			}
 			.eraseToAnyPublisher()

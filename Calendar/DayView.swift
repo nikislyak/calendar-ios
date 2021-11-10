@@ -11,29 +11,43 @@ import SwiftUI
 struct DayData: Hashable {
 	let day: Day
 	var isSelected: Bool
+	let tapAction: () -> Void
+
+	static func == (lhs: DayData, rhs: DayData) -> Bool {
+		lhs.day == rhs.day && lhs.isSelected == rhs.isSelected
+	}
+
+	func hash(into hasher: inout Hasher) {
+		hasher.combine(day)
+		hasher.combine(isSelected)
+	}
 }
 
 struct DayView: View {
 	let data: DayData
-	let tapAction: () -> Void
 
 	var body: some View {
-		GeometryReader { proxy in
-			Button(action: tapAction) {
+		Button { data.tapAction() } label: {
+			VStack(spacing: 0) {
 				Text(String(data.day.number))
-					.frame(maxWidth: proxy.size.width, maxHeight: proxy.size.height)
+					.font(.system(size: 18, weight: data.day.isCurrent ? .medium : .regular))
+					.frame(maxWidth: .infinity)
+					.padding(6)
+					.background {
+						Circle()
+							.fill(data.day.isCurrent ? Color.accentColor : .clear)
+					}
+					.foregroundColor(foregroundColor())
+
+				Circle()
+					.fill(.gray.opacity(0.5))
+					.frame(width: 8, height: 8)
+					.padding(8)
 			}
-			.background(
-				(data.day.isCurrent ? Color.accentColor : .clear)
-					.frame(maxWidth: dimension(proxy: proxy), maxHeight: dimension(proxy: proxy), alignment: .center)
-					.cornerRadius(dimension(proxy: proxy))
-			)
-			.foregroundColor(data.day.isCurrent ? .white : .primary)
-			.position(x: proxy.size.width / 2, y: proxy.size.height / 2)
 		}
 	}
 
-	private func dimension(proxy: GeometryProxy) -> CGFloat {
-		min(proxy.size.width, proxy.size.height)
+	private func foregroundColor() -> Color {
+		data.day.isCurrent ? .white : data.day.isWeekend ? .secondary : .primary
 	}
 }

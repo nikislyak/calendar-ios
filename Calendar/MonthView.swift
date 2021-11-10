@@ -17,39 +17,59 @@ struct MonthData: Hashable {
 
 struct MonthView: View {
 	@Environment(\.calendar) private var calendar
+	@Environment(\.pixelLength) private var pixelLength
+	@EnvironmentObject private var layoutState: CalendarLayoutState
 
 	let month: Identified<MonthData>
 
-	let dayTapAction: (Int, Int) -> Void
-
-	@State private var firstWeekdayFrame: CGRect?
-
 	var body: some View {
-		Group {
-			GeometryReader {
+		VStack(spacing: 0) {
+			GeometryReader { proxy in
 				Text(calendar.shortStandaloneMonthSymbols[month.month.rawValue - 1].capitalized)
-					.fontWeight(.medium)
+					.fontWeight(.semibold)
 					.foregroundColor(month.isCurrent ? .accentColor : .primary)
-					.font(.title2)
-					.position(x: firstWeekdayFrame?.midX ?? $0.size.width / 2, y: $0.size.height / 2)
+					.font(.title3)
+					.position(
+						x: firstMonthDayCenter(proxy: proxy)?.midX ?? proxy.size.width / 2,
+						y: proxy.size.height / 2
+					)
 			}
+			.frame(minHeight: 44)
 
 			ForEach(month.weeks) { week in
-				WeekView(
-					firstWeekDayFrame: $firstWeekdayFrame,
-					parentID: week == month.weeks.first ? month.id : nil,
-					data: week.value
-				) { id in
-					for week in month.weeks.enumerated() {
-						if let index = week.element.days.firstIndex(where: { $0.id == id }) {
-							dayTapAction(week.offset, index)
-							return
-						}
-					}
-				}
-				.buttonStyle(PlainButtonStyle())
+				WeekView(week: week)
+					.overlay { makeWeekSeparator(for: week) }
 			}
 		}
-		.coordinateSpace(name: month.id)
+	}
+
+	private func firstMonthDayCenter(proxy: GeometryProxy) -> CGRect? {
+		guard let firstWeek = month.weeks.first,
+			  let anchors = layoutState.weekLayouts[firstWeek.id],
+			  let firstDay = firstWeek.days.first,
+			  let dayAnchor = anchors[firstDay.id] else { return nil }
+		return proxy[dayAnchor]
+	}
+
+	private func weekRect(weekIndex: Int, proxy: GeometryProxy) -> CGRect? {
+		guard let anchors = layoutState.weekLayouts[month.weeks[weekIndex].id] else { return nil }
+		let rects = anchors.values.map { proxy[$0] }
+		return rects.reduce(rects.first) { $0?.union($1) }
+	}
+
+	private func makeWeekSeparator(for week: Identified<WeekData>) -> some View {
+		GeometryReader { proxy in
+			if let index = month.weeks.firstIndex(of: week), let rect = weekRect(weekIndex: index, proxy: proxy) {
+				Path { path in
+					path.move(to: .init(x: week == month.weeks.first && week.days.count < 7 ? rect.minX : 0, y: 0))
+					path.addLine(to: .init(
+						x: week == month.weeks.last && week.days.count < 7 ? rect.maxX : proxy.size.width,
+						y: 0
+					))
+				}
+				.stroke(lineWidth: pixelLength)
+				.foregroundColor(.secondary.opacity(0.5))
+			}
+		}
 	}
 }

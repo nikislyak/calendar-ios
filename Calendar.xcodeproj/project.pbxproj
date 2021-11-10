@@ -8,6 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		40127E9726F9E0E900C9F265 /* CompactMonthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 40127E9626F9E0E900C9F265 /* CompactMonthView.swift */; };
+		6F7F095F2732F3BE00262B6D /* CalendarState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7F095E2732F3BE00262B6D /* CalendarState.swift */; };
+		6F7F09612732F65000262B6D /* CalendarLayoutState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6F7F09602732F65000262B6D /* CalendarLayoutState.swift */; };
+		6FCCB20526FCC55C00B6E83A /* Auxiliary.swift in Sources */ = {isa = PBXBuildFile; fileRef = 6FCCB20426FCC55C00B6E83A /* Auxiliary.swift */; };
 		C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */ = {isa = PBXBuildFile; fileRef = C80C542C26E26D61002A9665 /* WhileSequence.swift */; };
 		C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */ = {isa = PBXBuildFile; fileRef = C82FA23926DCE5FE0099D749 /* Month.swift */; };
 		C893C87026E656A400FB2E4F /* Collection+binarySearch.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C86F26E656A400FB2E4F /* Collection+binarySearch.swift */; };
@@ -17,6 +20,7 @@
 		C893C87826E6ACF900FB2E4F /* YearView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87726E6ACF900FB2E4F /* YearView.swift */; };
 		C893C87A26E6AD6200FB2E4F /* CalendarView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87926E6AD6200FB2E4F /* CalendarView.swift */; };
 		C893C87C26E6AEEA00FB2E4F /* CalendarScaledView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */; };
+		C8AC1A33273046BD00EC4D83 /* View+extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8AC1A32273046BD00EC4D83 /* View+extensions.swift */; };
 		C8B1082726EA805800E4081D /* Localization.strings in Resources */ = {isa = PBXBuildFile; fileRef = C8B1082926EA805800E4081D /* Localization.strings */; };
 		C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */; };
 		C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8E8C91C26DFC51C00E1D440 /* Identified.swift */; };
@@ -29,6 +33,9 @@
 
 /* Begin PBXFileReference section */
 		40127E9626F9E0E900C9F265 /* CompactMonthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CompactMonthView.swift; sourceTree = "<group>"; };
+		6F7F095E2732F3BE00262B6D /* CalendarState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarState.swift; sourceTree = "<group>"; };
+		6F7F09602732F65000262B6D /* CalendarLayoutState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarLayoutState.swift; sourceTree = "<group>"; };
+		6FCCB20426FCC55C00B6E83A /* Auxiliary.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Auxiliary.swift; sourceTree = "<group>"; };
 		C80C542C26E26D61002A9665 /* WhileSequence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WhileSequence.swift; sourceTree = "<group>"; };
 		C82FA23926DCE5FE0099D749 /* Month.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Month.swift; sourceTree = "<group>"; };
 		C893C86F26E656A400FB2E4F /* Collection+binarySearch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Collection+binarySearch.swift"; sourceTree = "<group>"; };
@@ -38,6 +45,7 @@
 		C893C87726E6ACF900FB2E4F /* YearView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = YearView.swift; sourceTree = "<group>"; };
 		C893C87926E6AD6200FB2E4F /* CalendarView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarView.swift; sourceTree = "<group>"; };
 		C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarScaledView.swift; sourceTree = "<group>"; };
+		C8AC1A32273046BD00EC4D83 /* View+extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "View+extensions.swift"; sourceTree = "<group>"; };
 		C8B1082826EA805800E4081D /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localization.strings; sourceTree = "<group>"; };
 		C8B1082A26EA805D00E4081D /* ru */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = ru; path = ru.lproj/Localization.strings; sourceTree = "<group>"; };
 		C8E8C91A26DFBEE300E1D440 /* CalendarViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarViewModel.swift; sourceTree = "<group>"; };
@@ -84,6 +92,10 @@
 				C8EA33B526DC0A8700B9C838 /* CalendarApp.swift */,
 				C8EA33B726DC0A8700B9C838 /* RootView.swift */,
 				C893C87926E6AD6200FB2E4F /* CalendarView.swift */,
+				6F7F095E2732F3BE00262B6D /* CalendarState.swift */,
+				6F7F09602732F65000262B6D /* CalendarLayoutState.swift */,
+				6FCCB20426FCC55C00B6E83A /* Auxiliary.swift */,
+				C8AC1A32273046BD00EC4D83 /* View+extensions.swift */,
 				C893C87B26E6AEEA00FB2E4F /* CalendarScaledView.swift */,
 				40127E9626F9E0E900C9F265 /* CompactMonthView.swift */,
 				C893C87726E6ACF900FB2E4F /* YearView.swift */,
@@ -139,7 +151,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 1250;
-				LastUpgradeCheck = 1250;
+				LastUpgradeCheck = 1300;
 				TargetAttributes = {
 					C8EA33B126DC0A8700B9C838 = {
 						CreatedOnToolsVersion = 12.5.1;
@@ -184,8 +196,11 @@
 			buildActionMask = 2147483647;
 			files = (
 				C893C87626E6ACD700FB2E4F /* MonthView.swift in Sources */,
+				6F7F095F2732F3BE00262B6D /* CalendarState.swift in Sources */,
 				C893C87826E6ACF900FB2E4F /* YearView.swift in Sources */,
+				6FCCB20526FCC55C00B6E83A /* Auxiliary.swift in Sources */,
 				C8E8C91B26DFBEE300E1D440 /* CalendarViewModel.swift in Sources */,
+				6F7F09612732F65000262B6D /* CalendarLayoutState.swift in Sources */,
 				C8E8C91D26DFC51C00E1D440 /* Identified.swift in Sources */,
 				C893C87026E656A400FB2E4F /* Collection+binarySearch.swift in Sources */,
 				C8EA33B826DC0A8700B9C838 /* RootView.swift in Sources */,
@@ -193,6 +208,7 @@
 				40127E9726F9E0E900C9F265 /* CompactMonthView.swift in Sources */,
 				C893C87226E6AC9200FB2E4F /* DayView.swift in Sources */,
 				C893C87C26E6AEEA00FB2E4F /* CalendarScaledView.swift in Sources */,
+				C8AC1A33273046BD00EC4D83 /* View+extensions.swift in Sources */,
 				C80C542D26E26D61002A9665 /* WhileSequence.swift in Sources */,
 				C893C87426E6ACBC00FB2E4F /* WeekView.swift in Sources */,
 				C8E8C91F26DFC96300E1D440 /* CalendarComponentsManager.swift in Sources */,
@@ -220,6 +236,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -282,6 +299,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
@@ -344,7 +362,7 @@
 				DEVELOPMENT_TEAM = YC6855T4ZG;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Calendar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -366,7 +384,7 @@
 				DEVELOPMENT_TEAM = YC6855T4ZG;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = Calendar/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 14.4;
+				IPHONEOS_DEPLOYMENT_TARGET = 15.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
