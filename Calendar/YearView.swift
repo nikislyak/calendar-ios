@@ -15,15 +15,15 @@ struct YearData: Hashable {
 }
 
 struct YearView: View {
-	let data: YearData
+	@EnvironmentObject private var calendarViewModel: CalendarViewModel
 
-	let onMonthAppear: (MonthData) -> Void
-	
+	let year: YearData
+
 	var body: some View {
-		ForEach(data.months) { container in
-			MonthView(month: container)
+		ForEach(year.months) { month in
+			MonthView(month: month)
 				.onAppear {
-					onMonthAppear(container.value)
+					calendarViewModel.onAppear(of: month.value)
 				}
 		}
 	}

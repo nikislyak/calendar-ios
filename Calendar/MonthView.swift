@@ -18,7 +18,7 @@ struct MonthData: Hashable {
 struct MonthView: View {
 	@Environment(\.calendar) private var calendar
 	@Environment(\.pixelLength) private var pixelLength
-	@EnvironmentObject private var layoutState: CalendarLayoutState
+	@State private var weeksLayout: [UUID: [UUID: Anchor<CGRect>]] = [:]
 
 	let month: Identified<MonthData>
 
@@ -41,18 +41,23 @@ struct MonthView: View {
 					.overlay { makeWeekSeparator(for: week) }
 			}
 		}
+		.onPreferenceChange(WeekLayoutPreferenceKey.self) { value in
+			weeksLayout = Dictionary(uniqueKeysWithValues: month.weeks
+										.map(\.id)
+										.compactMap { id in value[id].map { (id, $0) } })
+		}
 	}
 
 	private func firstMonthDayCenter(proxy: GeometryProxy) -> CGRect? {
 		guard let firstWeek = month.weeks.first,
-			  let anchors = layoutState.weekLayouts[firstWeek.id],
+			  let anchors = weeksLayout[firstWeek.id],
 			  let firstDay = firstWeek.days.first,
 			  let dayAnchor = anchors[firstDay.id] else { return nil }
 		return proxy[dayAnchor]
 	}
 
 	private func weekRect(weekIndex: Int, proxy: GeometryProxy) -> CGRect? {
-		guard let anchors = layoutState.weekLayouts[month.weeks[weekIndex].id] else { return nil }
+		guard let anchors = weeksLayout[month.weeks[weekIndex].id] else { return nil }
 		let rects = anchors.values.map { proxy[$0] }
 		return rects.reduce(rects.first) { $0?.union($1) }
 	}

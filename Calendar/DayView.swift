@@ -24,18 +24,18 @@ struct DayData: Hashable {
 }
 
 struct DayView: View {
-	let data: DayData
+	let day: Identified<DayData>
 
 	var body: some View {
-		Button { data.tapAction() } label: {
+		Button { day.tapAction() } label: {
 			VStack(spacing: 0) {
-				Text(String(data.day.number))
-					.font(.system(size: 18, weight: data.day.isCurrent ? .medium : .regular))
+				Text(String(day.day.number))
+					.font(.system(size: 18, weight: day.day.isCurrent ? .medium : .regular))
 					.frame(maxWidth: .infinity)
 					.padding(6)
 					.background {
 						Circle()
-							.fill(data.day.isCurrent ? Color.accentColor : .clear)
+							.fill(day.day.isCurrent ? Color.accentColor : .clear)
 					}
 					.foregroundColor(foregroundColor())
 
@@ -48,6 +48,6 @@ struct DayView: View {
 	}
 
 	private func foregroundColor() -> Color {
-		data.day.isCurrent ? .white : data.day.isWeekend ? .secondary : .primary
+		day.day.isCurrent ? .white : day.day.isWeekend ? .secondary : .primary
 	}
 }

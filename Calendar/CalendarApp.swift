@@ -26,8 +26,9 @@ struct CalendarApp: App {
 
     var body: some Scene {
         WindowGroup {
-			RootView(calendarViewModel: calendarViewModel)
+			RootView()
 				.environment(\.calendar, calendar)
+				.environmentObject(calendarViewModel)
 		}
     }
 }

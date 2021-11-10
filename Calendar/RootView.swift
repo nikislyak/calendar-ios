@@ -9,12 +9,11 @@ import SwiftUI
 import Combine
 
 struct RootView: View {
-	@ObservedObject var calendarViewModel: CalendarViewModel
+	@EnvironmentObject var calendarViewModel: CalendarViewModel
 
     var body: some View {
 		NavigationView {
-			CalendarScaledView(calendarViewModel: calendarViewModel)
-				.navigationViewStyle(.stack)
+			CalendarScaledView()
 		}
 		.onAppear { calendarViewModel.makeInitialData() }
 		.accentColor(.red)

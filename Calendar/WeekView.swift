@@ -38,7 +38,7 @@ struct WeekView: View {
 				}
 			}
 			ForEach(week.days) { day in
-				DayView(data: day.value)
+				DayView(day: day)
 					.anchorPreference(
 						key: WeekLayoutPreferenceKey.self,
 						value: .bounds
