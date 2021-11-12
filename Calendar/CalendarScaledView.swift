@@ -21,28 +21,28 @@ struct CalendarScaledView: View {
 		GeometryReader { listProxy in
 			ScrollViewReader { scrollProxy in
 				ScrollView {
-					LazyVStack {
+					LazyVGrid(
+						columns: .init(
+							repeating: .init(
+								.fixed((listProxy.size.width - spacing * 2 - 32) / 3),
+								spacing: spacing,
+								alignment: .top
+							),
+							count: 3
+						),
+						alignment: .center,
+						spacing: 36
+					) {
 						ForEach(calendarViewModel.years) { year in
-							makeHeader(from: year)
-
-							LazyVGrid(
-								columns: .init(
-									repeating: .init(
-										.fixed((listProxy.size.width - spacing * 2 - 32) / 3),
-										spacing: spacing,
-										alignment: .top
-									),
-									count: 3
-								),
-								alignment: .center,
-								spacing: 36
-							) {
+							Section {
 								ForEach(year.months) { month in
 									makeCompactMonthView(
 										month: month,
 										width: (listProxy.size.width - spacing * 2 - 32) / 3
 									)
 								}
+							} header: {
+								makeHeader(from: year)
 							}
 							.onAppear {
 								calendarViewModel.onAppear(of: year.value)
@@ -50,10 +50,28 @@ struct CalendarScaledView: View {
 						}
 					}
 				}
+				.onAppear {
+					yearScrollAction = calendarViewModel.currentYearID.map {
+						ScrollAction(item: $0, animated: false, anchor: .top)
+					}
+				}
 				.buttonStyle(.plain)
 				.scrollAction(scrollProxy: scrollProxy, action: $yearScrollAction)
-				.toolbar { makeToolbarItems() }
 				.navigationBarTitleDisplayMode(.inline)
+				.onReceive(calendarViewModel.todayButtonTapPublisher) {
+					yearScrollAction = calendarViewModel
+						.currentYearID
+						.map { .init(item: $0, animated: true, anchor: .top) }
+				}
+				.toolbar {
+					ToolbarItem(placement: .navigationBarTrailing) {
+						Button {} label: {
+							Image(systemName: "magnifyingglass")
+								.resizable()
+								.aspectRatio(contentMode: .fit)
+						}
+					}
+				}
 			}
 		}
 	}
@@ -76,26 +94,6 @@ struct CalendarScaledView: View {
 		} label: {
 			CompactMonthView(width: width, monthData: month) {
 				openedMonth = $0
-			}
-		}
-	}
-
-	@ToolbarContentBuilder
-	private func makeToolbarItems() -> some ToolbarContent {
-		ToolbarItem(placement: .navigationBarTrailing) {
-			HStack {
-				Button {} label: {
-					Image(systemName: "magnifyingglass")
-				}
-			}
-		}
-		ToolbarItemGroup(placement: .bottomBar) {
-			Button {
-				yearScrollAction = calendarViewModel.years
-					.first { $0.isCurrent }
-					.map { .init(item: $0.id, animated: true, anchor: .top) }
-			} label: {
-				Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
 			}
 		}
 	}

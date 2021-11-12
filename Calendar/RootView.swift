@@ -16,6 +16,21 @@ struct RootView: View {
 			CalendarScaledView()
 		}
 		.onAppear { calendarViewModel.makeInitialData() }
-		.accentColor(.red)
+		.toolbar {
+			ToolbarItem(placement: .navigationBarTrailing) {
+				Button {} label: {
+					Image(systemName: "magnifyingglass")
+						.resizable()
+						.aspectRatio(contentMode: .fit)
+				}
+			}
+			ToolbarItem(placement: .bottomBar) {
+				Button {
+					calendarViewModel.onTodayButtonTap()
+				} label: {
+					Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+				}
+			}
+		}
     }
 }

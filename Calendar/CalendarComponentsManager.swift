@@ -64,6 +64,13 @@ final class CalendarComponentsManager {
 		return makeDays(for: interval)
 	}
 
+	func makeDays(for years: ClosedRange<Int>) -> AnyPublisher<[Day], Never> {
+		let startDate = calendar.date(from: DateComponents(year: years.lowerBound))!
+		let endDate = calendar.date(byAdding: .year, value: years.upperBound - years.lowerBound + 1, to: startDate)!
+		let interval = DateInterval(start: startDate, end: endDate)
+		return makeDays(for: interval)
+	}
+
 	func localizedString(for weekDay: DayOfWeek) -> String {
 		let symbols = calendar.shortWeekdaySymbols
 		let orderedSymbols = Array(symbols.dropFirst() + CollectionOfOne(symbols.first!))

@@ -13,19 +13,29 @@ final class CalendarViewModel: ObservableObject {
 
 	private let queue = DispatchQueue(label: "ru.nikitakislyakov1.calendar", target: .global(qos: .userInteractive))
 
-	private var bag = Set<AnyCancellable>()
-
 	var headerData: [DayOfWeek] {
 		manager.weekDays
 	}
 
 	@Published var years = [Identified<YearData>]()
 
+	var currentYearID: UUID?
+
 	init(manager: CalendarComponentsManager) {
 		self.manager = manager
 	}
 
-	func makeYearData(from days: [Day]) -> [Identified<YearData>] {
+	var todayButtonTapPublisher: AnyPublisher<Void, Never> {
+		todayButtonTapSubject.eraseToAnyPublisher()
+	}
+
+	private let todayButtonTapSubject = PassthroughSubject<Void, Never>()
+
+	func onTodayButtonTap() {
+		todayButtonTapSubject.send()
+	}
+
+	private func makeYearData(from days: [Day]) -> [Identified<YearData>] {
 		makeComponentsData(from: days, whileEqualBy: \.year) { days in
 			let months = makeMonthsData(from: days)
 			return .init(
@@ -83,10 +93,25 @@ final class CalendarViewModel: ObservableObject {
 	}
 
 	func makeInitialData() {
-		manager.makeCurrentYear()
+		manager
+			.makeCurrentYear()
 			.receive(on: queue)
-			.map { [unowned self] in makeYearData(from: $0) }
+			.map { [unowned self] currentYear -> AnyPublisher<([Identified<YearData>], [Identified<YearData>], [Identified<YearData>]), Never> in
+				let year = currentYear.first!.year
+				return Publishers
+					.Zip(
+						manager.makeDays(for: year - 3 ... year - 1),
+						manager.makeDays(for: year + 1 ... year + 3)
+					)
+					.map { [unowned self] in
+						(makeYearData(from: $0), makeYearData(from: currentYear), makeYearData(from: $1))
+					}
+					.eraseToAnyPublisher()
+			}
+			.switchToLatest()
 			.receive(on: DispatchQueue.main)
+			.handleEvents(receiveOutput: { [unowned self] _, currentYear, _ in currentYearID = currentYear.first?.id })
+			.map { $0 + $1 + $2 }
 			.assign(to: &$years)
 	}
 
@@ -100,26 +125,28 @@ final class CalendarViewModel: ObservableObject {
 
 	func onAppear(of year: YearData) {
 		Just((year, years))
-			.receive(on: queue)
-			.map { [manager] year, data -> AnyPublisher<[Identified<YearData>], Never> in
+			.map { year, data -> AnyPublisher<[Identified<YearData>], Never> in
 				if year.number == data.first?.number {
 					if data.dropFirst().first == nil {
 						return Publishers
 							.Zip(
-								manager.makeDays(for: year.number - 1),
-								manager.makeDays(for: year.number + 1)
+								manager.makeDays(for: year.number - 3 ... year.number - 1),
+								manager.makeDays(for: year.number + 1 ... year.number + 3)
 							)
+							.receive(on: queue)
 							.map { [unowned self] in makeYearData(from: $0) + data + makeYearData(from: $1) }
 							.eraseToAnyPublisher()
 					} else {
 						return manager
-							.makeDays(for: year.number - 1)
+							.makeDays(for: year.number - 3 ... year.number - 1)
+							.receive(on: queue)
 							.map { [unowned self] in makeYearData(from: $0) + data }
 							.eraseToAnyPublisher()
 					}
 				} else if year.number == data.last?.number {
 					return manager
-						.makeDays(for: year.number + 1)
+						.makeDays(for: year.number + 1 ... year.number + 3)
+						.receive(on: queue)
 						.map { [unowned self] in data + makeYearData(from: $0) }
 						.eraseToAnyPublisher()
 				} else {
@@ -135,15 +162,17 @@ final class CalendarViewModel: ObservableObject {
 		guard let year = month.weeks.first?.days.first?.day.year,
 			  month.month == .december || month.month == .january else { return }
 		Just((year, years))
-			.receive(on: queue)
-			.map { [manager] year, data -> AnyPublisher<[Identified<YearData>], Never> in
+			.map { year, data -> AnyPublisher<[Identified<YearData>], Never> in
 				if month.month == .december, year == data.last?.number {
-					return manager.makeDays(for: year + 1)
+					return manager
+						.makeDays(for: year + 1 ... year + 3)
+						.receive(on: queue)
 						.map { [unowned self] in data + makeYearData(from: $0) }
 						.eraseToAnyPublisher()
 				} else if month.month == .january, year == data.first?.number {
 					return manager
-						.makeDays(for: year - 1)
+						.makeDays(for: year - 3 ... year - 1)
+						.receive(on: queue)
 						.map { [unowned self] in makeYearData(from: $0) + data }
 						.eraseToAnyPublisher()
 				} else {

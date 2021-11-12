@@ -29,6 +29,7 @@ struct CalendarApp: App {
 			RootView()
 				.environment(\.calendar, calendar)
 				.environmentObject(calendarViewModel)
+				.accentColor(.red)
 		}
     }
 }

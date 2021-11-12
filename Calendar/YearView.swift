@@ -17,14 +17,19 @@ struct YearData: Hashable {
 struct YearView: View {
 	@EnvironmentObject private var calendarViewModel: CalendarViewModel
 
-	let year: YearData
+	let year: Identified<YearData>
+	@Binding var monthScrollAction: ScrollAction<UUID>?
 
 	var body: some View {
-		ForEach(year.months) { month in
-			MonthView(month: month)
-				.onAppear {
-					calendarViewModel.onAppear(of: month.value)
-				}
+		Section {
+			ForEach(year.months) { month in
+				MonthView(month: month)
+			}
+		}
+		.onAppear {
+			if monthScrollAction == nil {
+				calendarViewModel.onAppear(of: year.value)
+			}
 		}
 	}
 }

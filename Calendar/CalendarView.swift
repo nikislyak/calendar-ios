@@ -20,7 +20,7 @@ struct CalendarView: View {
 				ScrollView {
 					LazyVStack {
 						ForEach(calendarViewModel.years) { year in
-							YearView(year: year.value)
+							YearView(year: year, monthScrollAction: $monthForScrolling)
 						}
 					}
 				}
@@ -28,31 +28,26 @@ struct CalendarView: View {
 					monthForScrolling = ScrollAction(item: initialMonth, animated: false, anchor: .top)
 				}
 				.scrollAction(scrollProxy: scrollProxy, action: $monthForScrolling)
-				.toolbar { makeToolbarItems() }
 				.buttonStyle(.plain)
-			}
-		}
-	}
-
-	@ToolbarContentBuilder
-	private func makeToolbarItems() -> some ToolbarContent {
-		ToolbarItem(placement: .navigationBarTrailing) {
-			Button {} label: {
-				Image(systemName: "magnifyingglass")
-			}
-		}
-		ToolbarItemGroup(placement: .bottomBar) {
-			Button {
-				monthForScrolling = unwrap(
-					calendarViewModel.years
-						.first { $0.isCurrent }?.months
-						.first { $0.isCurrent }?.id,
-					true,
-					.top
-				)
-				.map(ScrollAction.init)
-			} label: {
-				Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
+				.onReceive(calendarViewModel.todayButtonTapPublisher) {
+					monthForScrolling = unwrap(
+						calendarViewModel.years
+							.first { $0.isCurrent }?.months
+							.first { $0.isCurrent }?.id,
+						true,
+						.top
+					)
+					.map(ScrollAction.init)
+				}
+				.toolbar {
+					ToolbarItem(placement: .navigationBarTrailing) {
+						Button {} label: {
+							Image(systemName: "magnifyingglass")
+								.resizable()
+								.aspectRatio(contentMode: .fit)
+						}
+					}
+				}
 			}
 		}
 	}
