@@ -27,6 +27,7 @@
 		C8EA33B826DC0A8700B9C838 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8EA33B726DC0A8700B9C838 /* RootView.swift */; };
 		C8EA33BA26DC0A8900B9C838 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8EA33B926DC0A8900B9C838 /* Assets.xcassets */; };
 		C8EA33BD26DC0A8900B9C838 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = C8EA33BC26DC0A8900B9C838 /* Preview Assets.xcassets */; };
+		C8F5F36C2742860800E9C53D /* CalendarStateTransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C8F5F36B2742860800E9C53D /* CalendarStateTransitionView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -53,6 +54,7 @@
 		C8EA33B926DC0A8900B9C838 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		C8EA33BC26DC0A8900B9C838 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		C8EA33BE26DC0A8900B9C838 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		C8F5F36B2742860800E9C53D /* CalendarStateTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarStateTransitionView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -87,6 +89,7 @@
 			children = (
 				C8EA33B526DC0A8700B9C838 /* CalendarApp.swift */,
 				C8EA33B726DC0A8700B9C838 /* RootView.swift */,
+				C8F5F36B2742860800E9C53D /* CalendarStateTransitionView.swift */,
 				C893C87926E6AD6200FB2E4F /* CalendarView.swift */,
 				6FCCB20426FCC55C00B6E83A /* Auxiliary.swift */,
 				C8AC1A32273046BD00EC4D83 /* View+extensions.swift */,
@@ -206,6 +209,7 @@
 				C8E8C91F26DFC96300E1D440 /* CalendarComponentsManager.swift in Sources */,
 				C8EA33B626DC0A8700B9C838 /* CalendarApp.swift in Sources */,
 				C82FA23A26DCE5FE0099D749 /* Month.swift in Sources */,
+				C8F5F36C2742860800E9C53D /* CalendarStateTransitionView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

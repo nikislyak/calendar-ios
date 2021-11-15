@@ -11,26 +11,10 @@ import Combine
 struct RootView: View {
 	@EnvironmentObject var calendarViewModel: CalendarViewModel
 
-    var body: some View {
+	var body: some View {
 		NavigationView {
-			CalendarScaledView()
+			CalendarStateTransitionView()
 		}
 		.onAppear { calendarViewModel.makeInitialData() }
-		.toolbar {
-			ToolbarItem(placement: .navigationBarTrailing) {
-				Button {} label: {
-					Image(systemName: "magnifyingglass")
-						.resizable()
-						.aspectRatio(contentMode: .fit)
-				}
-			}
-			ToolbarItem(placement: .bottomBar) {
-				Button {
-					calendarViewModel.onTodayButtonTap()
-				} label: {
-					Text(LocalizedStringKey("bottomBar.today"), tableName: "Localization")
-				}
-			}
-		}
-    }
+	}
 }

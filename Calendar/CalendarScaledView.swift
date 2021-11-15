@@ -12,7 +12,8 @@ struct CalendarScaledView: View {
 	@Environment(\.colorScheme) private var colorScheme
 	@EnvironmentObject private var calendarViewModel: CalendarViewModel
 
-	@State private var openedMonth: UUID?
+	@Binding var openedMonth: UUID?
+
 	@State private var yearScrollAction: ScrollAction<UUID>?
 
 	private let spacing: CGFloat = 8
@@ -88,12 +89,9 @@ struct CalendarScaledView: View {
 
 	@ViewBuilder
 	private func makeCompactMonthView(month: Identified<MonthData>, width: CGFloat) -> some View {
-		NavigationLink(tag: month.id, selection: $openedMonth) {
-			CalendarView(initialMonth: month.id)
-				.environmentObject(calendarViewModel)
-		} label: {
-			CompactMonthView(width: width, monthData: month) {
-				openedMonth = $0
+		CompactMonthView(width: width, monthData: month) { id in
+			withAnimation {
+				openedMonth = id
 			}
 		}
 	}

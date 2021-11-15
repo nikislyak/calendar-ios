@@ -39,15 +39,6 @@ struct CalendarView: View {
 					)
 					.map(ScrollAction.init)
 				}
-				.toolbar {
-					ToolbarItem(placement: .navigationBarTrailing) {
-						Button {} label: {
-							Image(systemName: "magnifyingglass")
-								.resizable()
-								.aspectRatio(contentMode: .fit)
-						}
-					}
-				}
 			}
 		}
 	}
