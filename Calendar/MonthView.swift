@@ -10,42 +10,68 @@ import SwiftUI
 
 struct MonthData: Hashable {
 	let month: Month
+	let year: Int
 	let name: String
 	var weeks: [Identified<WeekData>]
 	let isCurrent: Bool
 }
 
+enum VisibleMonthsPreferenceKey: PreferenceKey {
+	typealias Value = [UUID: Bool]
+
+	static let defaultValue: Value = [:]
+
+	static func reduce(value: inout Value, nextValue: () -> Value) {
+		value.merge(nextValue()) { $1 }
+	}
+}
+
 struct MonthView: View {
 	@Environment(\.calendar) private var calendar
 	@Environment(\.pixelLength) private var pixelLength
+	@EnvironmentObject private var calendarViewModel: CalendarViewModel
 	@State private var weeksLayout: [UUID: [UUID: Anchor<CGRect>]] = [:]
 
 	let month: Identified<MonthData>
+	let listProxy: GeometryProxy
 
 	var body: some View {
 		VStack(spacing: 0) {
 			GeometryReader { proxy in
-				Text(calendar.shortStandaloneMonthSymbols[month.month.rawValue - 1].capitalized)
-					.fontWeight(.semibold)
-					.foregroundColor(month.isCurrent ? .accentColor : .primary)
-					.font(.title3)
-					.position(
-						x: firstMonthDayCenter(proxy: proxy)?.midX ?? proxy.size.width / 2,
-						y: proxy.size.height / 2
-					)
+				if let frame = firstMonthDayCenter(proxy: proxy) {
+					Text(calendar.shortStandaloneMonthSymbols[month.month.rawValue - 1].capitalized)
+						.fontWeight(.semibold)
+						.foregroundColor(month.isCurrent ? .accentColor : .primary)
+						.font(.title3)
+						.position(x: frame.midX, y: 0)
+				}
 			}
-			.frame(minHeight: 44)
+			.padding(.top, 24)
+			.padding(.bottom, 12)
 
 			ForEach(month.weeks) { week in
 				WeekView(week: week)
 					.overlay { makeWeekSeparator(for: week) }
 			}
 		}
-		.onPreferenceChange(WeekLayoutPreferenceKey.self) { value in
-			weeksLayout = Dictionary(uniqueKeysWithValues: month.weeks
-										.map(\.id)
-										.compactMap { id in value[id].map { (id, $0) } })
+		.background {
+			GeometryReader { proxy in
+				Color.clear
+					.preference(
+						key: VisibleMonthsPreferenceKey.self,
+						value: [month.id: isVisibleOnScreen(listProxy: listProxy, monthProxy: proxy)]
+					)
+			}
 		}
+		.onPreferenceChange(WeekLayoutPreferenceKey.self) { value in
+			weeksLayout = value
+		}
+	}
+
+	private func isVisibleOnScreen(listProxy: GeometryProxy, monthProxy: GeometryProxy) -> Bool {
+		let listFrame = listProxy.frame(in: .global)
+		let monthFrame = monthProxy.frame(in: .global)
+		return listFrame.contains(monthFrame)
 	}
 
 	private func firstMonthDayCenter(proxy: GeometryProxy) -> CGRect? {

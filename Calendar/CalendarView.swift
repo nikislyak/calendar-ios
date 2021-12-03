@@ -20,26 +20,36 @@ struct CalendarView: View {
 				ScrollView {
 					LazyVStack {
 						ForEach(calendarViewModel.years) { year in
-							YearView(year: year, monthScrollAction: $monthForScrolling)
+							YearView(year: year, listProxy: listProxy)
 						}
 					}
 				}
-				.onAppear {
-					monthForScrolling = ScrollAction(item: initialMonth, animated: false, anchor: .top)
-				}
 				.scrollAction(scrollProxy: scrollProxy, action: $monthForScrolling)
 				.buttonStyle(.plain)
-				.onReceive(calendarViewModel.todayButtonTapPublisher) {
-					monthForScrolling = unwrap(
-						calendarViewModel.years
-							.first { $0.isCurrent }?.months
-							.first { $0.isCurrent }?.id,
-						true,
-						.top
-					)
-					.map(ScrollAction.init)
-				}
 			}
+		}
+		.onAppear {
+			monthForScrolling = ScrollAction(item: initialMonth, animated: false, anchor: .top)
+		}
+		.onDisappear {
+			calendarViewModel.trackedMonth = nil
+		}
+		.onReceive(calendarViewModel.todayButtonTapPublisher) {
+			monthForScrolling = unwrap(
+				calendarViewModel.years
+					.first { $0.isCurrent }?.months
+					.first { $0.isCurrent }?.id,
+				true,
+				.top
+			)
+			.map(ScrollAction.init)
+		}
+		.onPreferenceChange(VisibleMonthsPreferenceKey.self) { months in
+			guard let month = months.first(where: { $0.value }) else { return }
+			calendarViewModel.years
+				.flatMap(\.months)
+				.first { $0.id == month.key }
+				.map { calendarViewModel.trackedMonth = $0 }
 		}
 	}
 }

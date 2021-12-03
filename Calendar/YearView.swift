@@ -18,18 +18,16 @@ struct YearView: View {
 	@EnvironmentObject private var calendarViewModel: CalendarViewModel
 
 	let year: Identified<YearData>
-	@Binding var monthScrollAction: ScrollAction<UUID>?
+	let listProxy: GeometryProxy
 
 	var body: some View {
 		Section {
 			ForEach(year.months) { month in
-				MonthView(month: month)
+				MonthView(month: month, listProxy: listProxy)
 			}
 		}
 		.onAppear {
-			if monthScrollAction == nil {
-				calendarViewModel.onAppear(of: year.value)
-			}
+			calendarViewModel.onAppear(of: year.value)
 		}
 	}
 }

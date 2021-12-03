@@ -51,27 +51,32 @@ struct CalendarScaledView: View {
 						}
 					}
 				}
-				.onAppear {
-					yearScrollAction = calendarViewModel.currentYearID.map {
-						ScrollAction(item: $0, animated: false, anchor: .top)
-					}
-				}
 				.buttonStyle(.plain)
 				.scrollAction(scrollProxy: scrollProxy, action: $yearScrollAction)
-				.navigationBarTitleDisplayMode(.inline)
-				.onReceive(calendarViewModel.todayButtonTapPublisher) {
-					yearScrollAction = calendarViewModel
-						.currentYearID
-						.map { .init(item: $0, animated: true, anchor: .top) }
-				}
-				.toolbar {
-					ToolbarItem(placement: .navigationBarTrailing) {
-						Button {} label: {
-							Image(systemName: "magnifyingglass")
-								.resizable()
-								.aspectRatio(contentMode: .fit)
-						}
-					}
+			}
+		}
+		.onAppear {
+			var id: UUID?
+			if let month = calendarViewModel.trackedMonth,
+			   let year = calendarViewModel.years.first(where: { $0.months.contains { $0.id == month.id } }) {
+				id = year.id
+			} else if let currentYearID = calendarViewModel.currentYearID {
+				id = currentYearID
+			}
+			yearScrollAction = id.map { ScrollAction(item: $0, animated: false, anchor: .top) }
+		}
+		.onReceive(calendarViewModel.todayButtonTapPublisher) {
+			yearScrollAction = calendarViewModel
+				.currentYearID
+				.map { .init(item: $0, animated: true, anchor: .top) }
+		}
+		.navigationBarTitleDisplayMode(.inline)
+		.toolbar {
+			ToolbarItem(placement: .navigationBarTrailing) {
+				Button {} label: {
+					Image(systemName: "magnifyingglass")
+						.resizable()
+						.aspectRatio(contentMode: .fit)
 				}
 			}
 		}
@@ -89,9 +94,9 @@ struct CalendarScaledView: View {
 
 	@ViewBuilder
 	private func makeCompactMonthView(month: Identified<MonthData>, width: CGFloat) -> some View {
-		CompactMonthView(width: width, monthData: month) { id in
+		CompactMonthView(width: width, month: month) {
 			withAnimation {
-				openedMonth = id
+				openedMonth = month.id
 			}
 		}
 	}

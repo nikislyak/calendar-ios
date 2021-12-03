@@ -18,6 +18,7 @@ final class CalendarViewModel: ObservableObject {
 	}
 
 	@Published var years = [Identified<YearData>]()
+	@Published var trackedMonth: Identified<MonthData>?
 
 	var currentYearID: UUID?
 
@@ -71,6 +72,7 @@ final class CalendarViewModel: ObservableObject {
 			let weeks = makeWeeksData(from: days)
 			return .init(
 				month: days.first!.month,
+				year: sameYearDays.first!.year,
 				name: localizedString(for: days.first!.month),
 				weeks: weeks,
 				isCurrent: weeks.contains { $0.isCurrent }

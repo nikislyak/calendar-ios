@@ -12,23 +12,23 @@ struct CompactMonthView: View {
 	@Environment(\.calendar) private var calendar
 
 	let width: CGFloat
-	let monthData: Identified<MonthData>
-	let tapAction: (UUID) -> Void
+	let month: Identified<MonthData>
+	let tapAction: () -> Void
 
 	private let daysSpacing: CGFloat = 0
 
 	var body: some View {
 		Button {
-			tapAction(monthData.id)
+			tapAction()
 		} label: {
 			VStack(alignment: .leading, spacing: 0) {
-				Text(monthData.name)
+				Text(month.name)
 					.fontWeight(.semibold)
 					.font(.title3)
-					.foregroundColor(monthData.isCurrent ? .accentColor : .primary)
+					.foregroundColor(month.isCurrent ? .accentColor : .primary)
 
 				VStack(alignment: .leading, spacing: 0) {
-					ForEach(monthData.weeks) { week in
+					ForEach(month.weeks) { week in
 						HStack(spacing: daysSpacing) {
 							if week.value.days.first?.day.dayOfWeek.rawValue != calendar.firstWeekday {
 								Spacer()
